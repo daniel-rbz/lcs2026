@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budget Hawk | Financial Flight Cockpit</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- HTML2PDF CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            glow: '#A855F7',
+                            dark: '#0f0518',
+                            surface: '#1E112A',
+                            accent: '#8B5CF6'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0f0518;
+            background-image: radial-gradient(circle at top right, rgba(139, 92, 246, 0.15), transparent 400px),
+                              radial-gradient(circle at bottom left, rgba(168, 85, 247, 0.15), transparent 400px);
+            color: #f1f5f9;
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+        }
+        .cockpit-panel {
+            background: rgba(30, 17, 42, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 12px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
+        }
+        select, input.std-input {
+            background: rgba(15, 5, 24, 0.8) !important;
+            border: 1px solid rgba(139, 92, 246, 0.5) !important;
+            color: #fff !important;
+            transition: all 0.2s ease;
+        }
+        input.table-input {
+            background: transparent;
+            color: #fff;
+            border-bottom: 1px dashed rgba(168, 85, 247, 0.4);
+            transition: all 0.2s;
+            text-align: right;
+            width: 100px;
+        }
+        input.table-input:hover, input.table-input:focus {
+            background: rgba(168, 85, 247, 0.15);
+            border-bottom-color: #A855F7;
+            outline: none;
+        }
+        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
+            -webkit-appearance: none; margin: 0;
+        }
+        input[type=number] { -moz-appearance: textfield; }
+
+        .glow-text {
+            text-shadow: 0 0 10px rgba(168, 85, 247, 0.8);
+        }
+        .btn-ai {
+            background: linear-gradient(135deg, #A855F7, #6366f1);
+            transition: all 0.3s;
+        }
+        .btn-ai:hover { filter: brightness(1.2); box-shadow: 0 0 15px rgba(168, 85, 247, 0.5); }
+    </style>
+</head>
+<body class="antialiased pb-12 relative">
+
+    <!-- Top Navigation Bar -->
+    <nav class="flex justify-between items-center bg-brand-dark/90 border-b border-purple-800/80 p-4 sticky top-0 z-40 backdrop-blur-xl mb-6 shadow-lg shadow-purple-900/20">
+        <div class="flex items-center gap-4 pl-4">
+            <div>
+                <div class="text-3xl font-extrabold text-brand-glow glow-text tracking-tight leading-none">Budget Hawk</div>
+                <div class="text-[10px] text-purple-400 font-mono tracking-widest uppercase mt-1">Flight Cockpit</div>
+            </div>
+            
+            <div class="border-l border-purple-800 h-8 ml-2 mr-2"></div>
+            
+            <div class="text-center">
+                <div class="text-[10px] text-purple-400 uppercase tracking-widest">Stability Score</div>
+                <div id="stability-score" class="text-2xl font-bold text-green-400 animate-pulse leading-none">100</div>
+            </div>
+        </div>
+        
+        <div class="flex items-center gap-4 pr-4">
+            <input type="file" id="invoiceUpload" accept="image/*,application/pdf" class="hidden" onchange="handleAiUpload(event)">
+            <label for="invoiceUpload" id="uploadLabel" class="cursor-pointer border border-brand-accent text-purple-200 hover:bg-brand-accent/20 rounded px-4 py-2 text-xs font-semibold flex items-center gap-2 transition">
+                ✨ Gemini Vision Parser
+            </label>
+            
+            <button onclick="exportLayout()" class="btn-ai text-white rounded px-4 py-2 text-xs font-semibold flex items-center gap-2 shadow-lg shadow-purple-600/30">
+                📥 Export Official PDF
+            </button>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-6" id="dashboard-content">
+        <!-- Main Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            
+            <!-- Controller Panel -->
+            <div class="cockpit-panel p-6 lg:col-span-1" data-html2canvas-ignore="true">
+                
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div>
+                        <label class="block text-[10px] uppercase text-purple-300 mb-1 font-bold">Starting Capital ($)</label>
+                        <input type="number" id="capital" value="50000" class="std-input w-full rounded p-3 text-lg font-bold text-center glow-text text-brand-glow shadow-inner">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] uppercase text-purple-300 mb-1 font-bold">Time Horizon</label>
+                        <select id="horizon" class="std-input w-full rounded p-3 text-sm font-bold text-center">
+                            <option value="year">1 Year</option>
+                            <option value="term">1 Term</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Navigation Tabs -->
+                <div class="flex border-b border-purple-800/50 mb-6">
+                    <button id="tabOutflows" class="w-1/2 pb-2 text-center text-xs tracking-wider uppercase font-bold border-b-2 border-brand-accent text-brand-accent transition-colors" onclick="switchTabs('outflows')">💸 Outflows</button>
+                    <button id="tabInflows" class="w-1/2 pb-2 text-center text-xs tracking-wider uppercase font-bold border-b-2 border-transparent text-purple-400 hover:text-purple-200 transition-colors" onclick="switchTabs('inflows')">💰 Inflows</button>
+                </div>
+                
+                <!-- OUTFLOWS PANEL -->
+                <div id="panelOutflows" class="space-y-4">
+                    <div>
+                        <label class="block text-[10px] uppercase text-purple-300 mb-1">Degree Program</label>
+                        <select id="degree" class="w-full rounded p-2 text-sm" onchange="clearOverride('tuition')">
+                            {% for deg in options.degrees %}
+                            <option value="{{ deg }}">{{ deg }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-[10px] uppercase text-purple-300 mb-1">Entry Year</label>
+                        <select id="entry_year" class="w-full rounded p-2 text-sm" onchange="clearOverride('tuition')">
+                            {% for y in options.entry_years %}
+                            <option value="{{ y }}">{{ y }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] uppercase text-purple-300 mb-1">Residence Lifestyle</label>
+                        <select id="residence" class="w-full rounded p-2 text-sm" onchange="clearOverride('living')">
+                            <option value="0">Off-Campus ($0.00)</option>
+                            {% for res in options.residences %}
+                            <option value="{{ res.cost }}">{{ res.label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] uppercase text-purple-300 mb-1">Meal Plan</label>
+                        <select id="meal" class="w-full rounded p-2 text-sm" onchange="clearOverride('living')">
+                            <option value="0">Self-Catered ($0.00)</option>
+                            {% for m in options.meals %}
+                            <option value="{{ m.cost }}">{{ m.label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] uppercase text-purple-300 mb-1">Vehicle Module</label>
+                        <select id="car" class="w-full rounded p-2 text-sm" onchange="clearOverride('transport')">
+                            {% for c in options.cars %}
+                            <option value="{{ c }}">{{ c }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-[10px] uppercase text-purple-300 mb-1">Weekly Commute (KM)</label>
+                        <input type="number" id="distance" onkeyup="clearOverride('transport')" value="50" class="std-input w-full rounded p-2 text-sm">
+                    </div>
+                    
+                    <!-- Custom Ledger Form -->
+                    <div class="mt-6 pt-4 border-t border-purple-800/50">
+                        <h3 class="text-xs uppercase font-bold text-brand-accent mb-2">Add Custom Expense</h3>
+                        <div class="flex gap-2 mb-2">
+                            <input type="text" id="customName" placeholder="e.g. Gym" class="std-input w-2/3 rounded p-2 text-xs">
+                            <input type="number" id="customCost" placeholder="$" class="std-input w-1/3 rounded p-2 text-xs">
+                        </div>
+                        <button onclick="addCustomCost()" class="w-full bg-purple-600 hover:bg-purple-500 text-white text-xs py-2 rounded transition shadow-md shadow-purple-900/50">
+                            + Add to Ledger
+                        </button>
+                        
+                        <ul id="customLedgerList" class="mt-4 space-y-2 max-h-40 overflow-y-auto pr-1">
+                            <!-- JS populated expenses -->
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- INFLOWS PANEL -->
+                <div id="panelInflows" class="hidden space-y-6">
+                    <div class="bg-purple-900/20 p-4 rounded border border-purple-800/50">
+                        <div class="text-xs text-brand-glow mb-2 font-bold flex items-center gap-2">
+                            <span>🎓</span> Academic Job Engine
+                        </div>
+                        <p class="text-[10px] text-purple-400 mb-4 leading-relaxed">
+                            Offset your burn rate by indicating part-time or seasonal work income over the academic school year.
+                        </p>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-[10px] uppercase text-purple-300 mb-1">Income Amount ($)</label>
+                                <input type="number" id="income_amount" value="0" class="std-input w-full rounded p-2 text-sm text-green-300 font-mono">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] uppercase text-purple-300 mb-1">Frequency</label>
+                                <select id="income_freq" class="w-full rounded p-2 text-sm std-input">
+                                    <option value="weekly">Weekly (x32 weeks)</option>
+                                    <option value="bi-weekly">Bi-Weekly (x16 paychecks)</option>
+                                    <option value="monthly">Monthly (x8 months)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Visualization Panel -->
+            <div class="lg:col-span-3 space-y-6">
+                <!-- Data HUD -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="cockpit-panel p-4 text-center">
+                        <div class="text-[10px] tracking-widest text-purple-400 mb-1 uppercase" id="hud-lbl-tuition">Tuition + Fees</div>
+                        <div id="cost-tuition" class="text-xl font-bold text-purple-200">$0.00</div>
+                    </div>
+                    <div class="cockpit-panel p-4 text-center">
+                        <div class="text-[10px] tracking-widest text-purple-400 mb-1 uppercase" id="hud-lbl-living">Living Costs</div>
+                        <div id="cost-living" class="text-xl font-bold text-purple-200">$0.00</div>
+                    </div>
+                    <div class="cockpit-panel p-4 text-center border border-purple-800/50 bg-purple-900/10">
+                        <div class="text-[10px] tracking-widest text-green-400 mb-1 uppercase" id="hud-lbl-income">Income Offset</div>
+                        <div id="hud-income" class="text-xl font-bold text-green-300">+$0.00</div>
+                    </div>
+                    <div class="cockpit-panel p-4 text-center border border-brand-accent/50 bg-brand-accent/5">
+                        <div class="text-[10px] tracking-widest text-brand-glow mb-1 uppercase font-bold" id="hud-lbl-net">Net Burn Rate</div>
+                        <div id="hud-net" class="text-2xl font-black text-brand-glow drop-shadow-lg">$0.00</div>
+                    </div>
+                </div>
+
+                <!-- Main Chart -->
+                <div class="cockpit-panel p-6">
+                    <h2 class="text-lg font-bold text-brand-accent mb-4">Financial Runway Projection</h2>
+                    <div class="relative h-96 w-full">
+                        <canvas id="runwayChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Detailed Breakdown Table -->
+                <div class="cockpit-panel p-6 overflow-x-auto">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-lg font-bold text-brand-accent" id="tbl-header-title">Annual Financial Breakdown</h2>
+                        <span class="text-[10px] text-purple-400 uppercase tracking-widest border border-purple-800 rounded px-2 py-1 bg-purple-900/30">Click values to override</span>
+                    </div>
+                    
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-brand-accent/50 text-brand-glow text-xs uppercase tracking-wider bg-brand-dark/50">
+                                <th class="p-3">Category</th>
+                                <th class="p-3 text-right">Extrapolated Value (CAD)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm">
+                            <tr class="border-b border-purple-900/50 hover:bg-purple-900/30 transition-colors">
+                                <td class="p-3 text-purple-200">Base Tuition</td>
+                                <td class="p-3 text-right">
+                                    <span class="text-purple-400 text-xs mr-1">$</span><input type="number" id="tbl-tuition" onchange="setOverride('tuition', this.value)" class="table-input font-mono">
+                                </td>
+                            </tr>
+                            <tr class="border-b border-purple-900/50 hover:bg-purple-900/30 transition-colors">
+                                <td class="p-3 text-purple-200">Incidental Fees</td>
+                                <td class="p-3 text-right">
+                                    <span class="text-purple-400 text-xs mr-1">$</span><input type="number" id="tbl-incidental" onchange="setOverride('incidental', this.value)" class="table-input font-mono">
+                                </td>
+                            </tr>
+                            <tr class="border-b border-purple-900/50 hover:bg-purple-900/30 transition-colors">
+                                <td class="p-3 text-purple-200">Living Costs (Residence + Meals)</td>
+                                <td class="p-3 text-right">
+                                    <span class="text-purple-400 text-xs mr-1">$</span><input type="number" id="tbl-living" onchange="setOverride('living', this.value)" class="table-input font-mono">
+                                </td>
+                            </tr>
+                            <tr class="border-b border-purple-900/50 hover:bg-purple-900/30 transition-colors">
+                                <td class="p-3 text-purple-200">Transportation</td>
+                                <td class="p-3 text-right">
+                                    <span class="text-purple-400 text-xs mr-1">$</span><input type="number" id="tbl-transport" onchange="setOverride('transport', this.value)" class="table-input font-mono">
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tbody id="tbl-custom-body" class="text-sm">
+                            <!-- JS populates this dynamically -->
+                        </tbody>
+                        
+                        <!-- Mathematical Totals -->
+                        <tbody class="text-sm border-t border-purple-500">
+                            <tr class="bg-purple-900/20 font-bold border-b border-purple-800/50">
+                                <td class="p-3 text-purple-300" id="lbl-gross-rate">Gross Annual Expenses</td>
+                                <td id="tbl-gross" class="p-3 text-right text-red-300 font-mono">$0.00</td>
+                            </tr>
+                            <tr class="bg-green-900/10 font-bold border-b border-purple-800/50">
+                                <td class="p-3 text-green-400" id="lbl-income">Job Income Offset</td>
+                                <td id="tbl-income" class="p-3 text-right text-green-400 font-mono">+$0.00</td>
+                            </tr>
+                            <tr class="bg-brand-accent/20 border-t border-brand-accent">
+                                <td class="p-4 text-brand-glow text-base font-black tracking-wide uppercase" id="lbl-burn-rate">Net Annual Burn Rate</td>
+                                <td id="tbl-net" class="p-4 text-right text-brand-glow font-mono text-lg font-black">$0.00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- AI Modal Popup -->
+    <div id="aiModal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-50 backdrop-blur-sm" data-html2canvas-ignore="true">
+        <div class="cockpit-panel p-8 w-full max-w-lg border border-purple-500 shadow-2xl shadow-purple-900/50">
+            <h2 class="text-2xl font-bold text-white mb-2 flex items-center gap-2">✨ Document Parsing Complete</h2>
+            <p class="text-purple-300 text-sm mb-6">Select which values you would like to import as Custom Expenses into your dashboard.</p>
+            
+            <div id="aiCheckboxes" class="space-y-4 mb-6 max-h-60 overflow-y-auto pr-2">
+                <!-- Checkboxes populated here -->
+            </div>
+            
+            <div class="flex justify-end gap-3 pt-4 border-t border-purple-800">
+                <button onclick="document.getElementById('aiModal').classList.add('hidden')" class="px-4 py-2 text-sm text-purple-300 hover:text-white transition">Cancel</button>
+                <button onclick="applyAiData()" class="px-4 py-2 text-sm bg-purple-600 hover:bg-purple-500 text-white rounded transition">Apply Checked Imports</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Hidden Invoice Template for PDF Export (Clean Output) -->
+    <div id="invoiceTemplateContainer" style="display: none; position: absolute; top: -9999px;">
+        <div id="invoiceTemplate" style="background: white; color: black; width: 800px; padding: 40px; font-family: 'Inter', sans-serif;">
+           <!-- Header -->
+           <div style="display: flex; justify-content: space-between; border-bottom: 2px solid #8B5CF6; padding-bottom: 20px; margin-bottom: 20px;">
+               <div>
+                   <h1 style="color: #A855F7; font-size: 32px; font-weight: 900; margin: 0; letter-spacing: -1px;">Budget Hawk</h1>
+                   <p style="color: #666; font-size: 11px; text-transform: uppercase; font-weight: bold; letter-spacing: 2px;">Official Financial Statement</p>
+               </div>
+               <div style="text-align: right; font-size: 12px;">
+                   <p style="margin: 0; font-weight: bold; text-transform: uppercase;">Date Generated:</p>
+                   <p style="margin: 3px 0; color: #444;" id="invDate"></p>
+                   <p style="margin: 3px 0; color: #444; font-weight: bold;" id="invHorizon"></p>
+               </div>
+           </div>
+           
+           <!-- Param Summary -->
+           <div style="margin-bottom: 30px; display: flex; gap: 20px;">
+               <div style="flex: 1; background: #f9fafb; padding: 15px; border-radius: 8px; border: 1px solid #eee;">
+                   <h3 style="margin-top: 0; color: #A855F7; font-size: 12px; font-weight: 800; text-transform: uppercase; border-bottom: 1px solid #e5e7eb; padding-bottom: 5px;">Mission Parameters</h3>
+                   <p style="margin: 8px 0; font-size: 13px;"><strong>Degree:</strong> <span id="invDegree"></span></p>
+                   <p style="margin: 8px 0; font-size: 13px;"><strong>Residence:</strong> <span id="invRes"></span></p>
+                   <p style="margin: 8px 0; font-size: 13px;"><strong>Meal Plan:</strong> <span id="invMeal"></span></p>
+               </div>
+               <div style="flex: 1; background: #f9fafb; padding: 15px; border-radius: 8px; border: 1px solid #eee;">
+                   <h3 style="margin-top: 0; color: #A855F7; font-size: 12px; font-weight: 800; text-transform: uppercase; border-bottom: 1px solid #e5e7eb; padding-bottom: 5px;">Capital & Stability</h3>
+                   <p style="margin: 8px 0; font-size: 13px;"><strong>Starting Capital:</strong> <span id="invCap"></span></p>
+                   <p style="margin: 8px 0; font-size: 13px;"><strong>Stability Score:</strong> <span id="invScore"></span></p>
+               </div>
+           </div>
+        
+           <!-- Ledger Table -->
+           <h3 style="color: #333; font-size: 12px; text-transform: uppercase; font-weight: 800; padding-bottom: 5px; margin-bottom: 10px;">Itemized Financial Ledger</h3>
+           <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px; font-size: 13px;">
+               <thead>
+                   <tr style="background: #f3f4f6; text-align: left; text-transform: uppercase; font-size: 11px; color: #555;">
+                       <th style="padding: 10px; border-bottom: 2px solid #ddd;">Category</th>
+                       <th style="padding: 10px; border-bottom: 2px solid #ddd; text-align: right;">Extrapolated Value (CAD)</th>
+                   </tr>
+               </thead>
+               <tbody id="invTableBody">
+                   <!-- Populated by JS -->
+               </tbody>
+           </table>
+        
+           <!-- Totals -->
+           <div style="display: flex; justify-content: flex-end;">
+               <div style="width: 350px;">
+                   <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee; font-size: 14px;">
+                       <span style="color: #555; text-transform: uppercase; font-size: 12px; font-weight: bold;">Gross Expenses:</span>
+                       <strong id="invGross" style="color: #dc2626;"></strong>
+                   </div>
+                   <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee; font-size: 14px;">
+                       <span style="color: #555; text-transform: uppercase; font-size: 12px; font-weight: bold;">Income Offset:</span>
+                       <strong id="invIncome" style="color: #059669;"></strong>
+                   </div>
+                   <div style="display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 2px solid #111; font-size: 20px; font-weight: 900; color: #A855F7;">
+                       <span>NET BURN RATE:</span>
+                       <strong id="invNet"></strong>
+                   </div>
+               </div>
+           </div>
+           
+           <p style="text-align: center; color: #999; font-size: 10px; margin-top: 60px; font-style: italic;">This dynamic flight plan was generated by Budget Hawk OS. All projections are estimations.</p>
+        </div>
+    </div>
+
+    <!-- JS Logic -->
+    <script>
+        let runwayChartInstance = null;
+        let activeCustomCosts = [];
+        let pendingAiData = null;
+        let lastSimulationData = null; // Store last server response for PDF parsing
+        
+        let overrides = { tuition: null, incidental: null, living: null, transport: null };
+        
+        function getSafeSelectText(id) {
+            const el = document.getElementById(id);
+            return el.options[el.selectedIndex].text;
+        }
+
+        function exportLayout() {
+            if(!lastSimulationData) { alert("Please wait for simulation to finish calculating."); return; }
+            
+            // 1. Populate Hidden Invoice Elements
+            const isTerm = document.getElementById('horizon').value === 'term';
+            document.getElementById('invDate').innerText = new Date().toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+            document.getElementById('invHorizon').innerText = isTerm ? 'Horizon: Single Academic Term' : 'Horizon: Full Academic Year';
+            
+            document.getElementById('invDegree').innerText = getSafeSelectText('degree');
+            document.getElementById('invRes').innerText = getSafeSelectText('residence');
+            document.getElementById('invMeal').innerText = getSafeSelectText('meal');
+            
+            document.getElementById('invCap').innerText = '$' + parseFloat(document.getElementById('capital').value || 0).toLocaleString(undefined, {minimumFractionDigits: 2});
+            document.getElementById('invScore').innerText = lastSimulationData.stability_score + '/100 (' + lastSimulationData.stability_label + ')';
+            
+            // Rebuild Table
+            const tbody = document.getElementById('invTableBody');
+            tbody.innerHTML = '';
+            
+            const renderRow = (label, amt) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="padding: 10px; border-bottom: 1px solid #f3f4f6; color: #333;">${label}</td>
+                    <td style="padding: 10px; border-bottom: 1px solid #f3f4f6; text-align: right; font-family: monospace; color: #111;">$${amt.toFixed(2)}</td>`;
+                tbody.appendChild(tr);
+            };
+            
+            renderRow('Base Tuition', overrides.tuition !== null ? overrides.tuition : lastSimulationData.annual_tuition);
+            renderRow('Incidental Fees', overrides.incidental !== null ? overrides.incidental : lastSimulationData.annual_incidental);
+            renderRow('Living Costs (Residence/Meals)', overrides.living !== null ? overrides.living : lastSimulationData.annual_living);
+            renderRow('Transportation & Commute', overrides.transport !== null ? overrides.transport : lastSimulationData.annual_transport);
+            
+            // Add custom costs
+            activeCustomCosts.forEach(c => {
+                renderRow('Custom Expense: ' + c.name, c.cost);
+            });
+            
+            document.getElementById('invGross').innerText = '$' + lastSimulationData.gross_annual_cost.toLocaleString(undefined, {minimumFractionDigits: 2});
+            document.getElementById('invIncome').innerText = '+$' + lastSimulationData.annual_income.toLocaleString(undefined, {minimumFractionDigits: 2});
+            document.getElementById('invNet').innerText = '$' + lastSimulationData.net_burn_rate.toLocaleString(undefined, {minimumFractionDigits: 2});
+
+            // 2. Generate PDF using un-hidden div container, then hide again!
+            const container = document.getElementById('invoiceTemplateContainer');
+            const target = document.getElementById('invoiceTemplate');
+            
+            container.style.display = 'block'; // make active in DOM temporarily
+            
+            const opt = {
+                margin:       0, // We have padding explicitly set in the HTML DIV
+                filename:     'Budget_Hawk_Statement.pdf',
+                image:        { type: 'jpeg', quality: 1.0 },
+                html2canvas:  { scale: 2, useCORS: true },
+                jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+            
+            html2pdf().set(opt).from(target).save().then(() => {
+                container.style.display = 'none'; // hide instantly after completion
+            });
+        }
+
+        function switchTabs(target) {
+            const btnOut = document.getElementById('tabOutflows');
+            const btnIn = document.getElementById('tabInflows');
+            const pnlOut = document.getElementById('panelOutflows');
+            const pnlIn = document.getElementById('panelInflows');
+            
+            if(target === 'outflows') {
+                btnOut.className = "w-1/2 pb-2 text-center text-xs tracking-wider uppercase font-bold border-b-2 border-brand-accent text-brand-accent transition-colors";
+                btnIn.className = "w-1/2 pb-2 text-center text-xs tracking-wider uppercase font-bold border-b-2 border-transparent text-purple-400 hover:text-purple-200 transition-colors";
+                pnlOut.classList.remove('hidden');
+                pnlIn.classList.add('hidden');
+            } else {
+                btnIn.className = "w-1/2 pb-2 text-center text-xs tracking-wider uppercase font-bold border-b-2 border-brand-accent text-brand-accent transition-colors";
+                btnOut.className = "w-1/2 pb-2 text-center text-xs tracking-wider uppercase font-bold border-b-2 border-transparent text-purple-400 hover:text-purple-200 transition-colors";
+                pnlIn.classList.remove('hidden');
+                pnlOut.classList.add('hidden');
+            }
+        }
+        
+        // Listen to everything
+        const inputs = ['capital', 'horizon', 'degree', 'entry_year', 'residence', 'meal', 'car', 'distance', 'income_amount', 'income_freq'];
+        inputs.forEach(id => {
+            const el = document.getElementById(id);
+            if(el) {
+                el.addEventListener('change', updateSimulation);
+                if(el.tagName === 'INPUT') el.addEventListener('keyup', updateSimulation);
+            }
+        });
+        
+        function clearOverride(key) { overrides[key] = null; }
+        
+        function setOverride(key, val) {
+            const num = parseFloat(val);
+            if(!isNaN(num)) overrides[key] = num;
+            else overrides[key] = null;
+            updateSimulation();
+        }
+
+        function addCustomCost(name=null, cost=null) {
+            const expenseName = name || document.getElementById('customName').value.trim();
+            const expenseCost = cost || parseFloat(document.getElementById('customCost').value);
+            if(expenseName && expenseCost > 0) {
+                activeCustomCosts.push({ id: Date.now() + Math.random(), name: expenseName, cost: expenseCost });
+                document.getElementById('customName').value = '';
+                document.getElementById('customCost').value = '';
+                renderCustomLedger();
+                updateSimulation();
+            }
+        }
+        
+        function removeCustomCost(id) {
+            activeCustomCosts = activeCustomCosts.filter(c => c.id !== id);
+            renderCustomLedger();
+            updateSimulation();
+        }
+        
+        function renderCustomLedger() {
+            const ul = document.getElementById('customLedgerList');
+            ul.innerHTML = '';
+            activeCustomCosts.forEach(c => {
+                const li = document.createElement('li');
+                li.className = "flex justify-between items-center bg-purple-900/40 p-2 rounded text-xs border border-purple-800/50";
+                li.innerHTML = `
+                    <span class="text-purple-200">${c.name}</span>
+                    <div class="flex items-center gap-2">
+                        <span class="text-white font-mono">$${c.cost.toFixed(2)}</span>
+                        <button onclick="removeCustomCost(${c.id})" class="text-red-400 hover:text-red-300">×</button>
+                    </div>
+                `;
+                ul.appendChild(li);
+            });
+        }
+
+        async function handleAiUpload(event) {
+            const file = event.target.files[0];
+            if(!file) return;
+            const btnLabel = document.getElementById('uploadLabel');
+            const originalText = btnLabel.innerHTML;
+            btnLabel.innerHTML = '⏳ Extracting AI Data...';
+            
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            try {
+                const res = await fetch('/api/upload', { method: 'POST', body: formData });
+                const data = await res.json();
+                if(data.error) alert("Gemini Setup Error: " + data.error);
+                else displayAiModal(data);
+            } catch(e) {
+                alert("Upload failed. Ensure Gemini Key is set up.");
+            } finally {
+                btnLabel.innerHTML = originalText;
+                event.target.value = '';
+            }
+        }
+        
+        function displayAiModal(data) {
+            pendingAiData = data;
+            const container = document.getElementById('aiCheckboxes');
+            container.innerHTML = '';
+            
+            const targets = [
+                {key: 'tuition_base', label: 'Missing Tuition Cost detected'},
+                {key: 'incidental_fees', label: 'Extra Incidental Fees detected'},
+                {key: 'books_and_supplies', label: 'Books/Supplies detected'},
+                {key: 'residence_cost', label: 'Rent/Residence Document detected'},
+                {key: 'meal_plan_cost', label: 'Meal Invoice detected'}
+            ];
+            
+            targets.forEach(t => {
+                if(data[t.key] && data[t.key] > 0) addCheckboxRow(container, t.key, t.label, data[t.key]);
+            });
+            
+            if(data.other_custom_costs && Array.isArray(data.other_custom_costs)) {
+                data.other_custom_costs.forEach((c, i) => { if(c.cost>0) addCheckboxRow(container, `c_${i}`, `Custom: ${c.name}`, c.cost, c.name); });
+            }
+            if(container.innerHTML === '') container.innerHTML = '<p class="text-yellow-400">No values found.</p>';
+            document.getElementById('aiModal').classList.remove('hidden');
+        }
+        
+        function addCheckboxRow(container, id, title, value, custName=null) {
+            const div = document.createElement('div');
+            div.className = "flex items-center p-3 bg-purple-900/30 rounded border border-purple-800/50 hover:bg-purple-900/50 transition cursor-pointer";
+            div.innerHTML = `
+                <input type="checkbox" id="chk_${id}" data-val="${value}" data-name="${custName || title}" class="w-4 h-4 text-brand-glow bg-gray-800 border-gray-600 rounded mr-3 cursor-pointer" checked>
+                <div class="flex-1 text-sm font-medium text-white">${custName || title}</div>
+                <div class="text-brand-accent font-mono font-bold">$${value.toFixed(2)}</div>
+            `;
+            container.appendChild(div);
+        }
+        
+        function applyAiData() {
+            document.querySelectorAll('#aiCheckboxes input[type="checkbox"]:checked').forEach(chk => {
+                addCustomCost(chk.getAttribute('data-name'), parseFloat(chk.getAttribute('data-val')));
+            });
+            document.getElementById('aiModal').classList.add('hidden');
+        }
+
+        async function updateSimulation() {
+            const isTerm = document.getElementById('horizon').value === 'term';
+            
+            const payload = {
+                horizon: document.getElementById('horizon').value,
+                starting_capital: document.getElementById('capital').value || 0,
+                degree: document.getElementById('degree').value,
+                entry_year: document.getElementById('entry_year').value,
+                residence_cost: document.getElementById('residence').value || 0,
+                meal_cost: document.getElementById('meal').value || 0,
+                car_model: document.getElementById('car').value,
+                distance_km: document.getElementById('distance').value || 0,
+                custom_costs: activeCustomCosts,
+                overrides: overrides,
+                income_amount: document.getElementById('income_amount') ? document.getElementById('income_amount').value || 0 : 0,
+                income_freq: document.getElementById('income_freq') ? document.getElementById('income_freq').value : 'weekly'
+            };
+
+            const response = await fetch('/api/calculate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const data = await response.json();
+            
+            // Store globally for PDF Export
+            lastSimulationData = data;
+
+            // Dynamic Labels based on Horizon
+            document.getElementById('tbl-header-title').innerText = isTerm ? 'Term Financial Breakdown' : 'Annual Financial Breakdown';
+            document.getElementById('lbl-gross-rate').innerText = isTerm ? 'Gross Term Expenses' : 'Gross Annual Expenses';
+            document.getElementById('lbl-income').innerText = isTerm ? 'Term Income Offset' : 'Annual Income Offset';
+            document.getElementById('lbl-burn-rate').innerText = isTerm ? 'Net Term Burn Rate' : 'Net Annual Burn Rate';
+            
+            document.getElementById('hud-lbl-tuition').innerText = isTerm ? 'Term Tuition' : 'Annual Tuition';
+            document.getElementById('hud-lbl-living').innerText = isTerm ? 'Term Living Costs' : 'Annual Living Costs';
+            document.getElementById('hud-lbl-net').innerText = isTerm ? 'Net Term Burn Rate' : 'Net Annual Burn Rate';
+
+            // Stats HUD
+            document.getElementById('cost-tuition').innerText = '$' + (data.annual_tuition + data.annual_incidental).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            document.getElementById('cost-living').innerText = '$' + data.annual_living.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            document.getElementById('hud-income').innerText = '+$' + data.annual_income.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            document.getElementById('hud-net').innerText = '$' + data.net_burn_rate.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+
+            // Table Breakdown Inputs
+            document.getElementById('tbl-tuition').value = overrides.tuition !== null ? overrides.tuition : data.annual_tuition.toFixed(2);
+            document.getElementById('tbl-incidental').value = overrides.incidental !== null ? overrides.incidental : data.annual_incidental.toFixed(2);
+            document.getElementById('tbl-living').value = overrides.living !== null ? overrides.living : data.annual_living.toFixed(2);
+            document.getElementById('tbl-transport').value = overrides.transport !== null ? overrides.transport : data.annual_transport.toFixed(2);
+            
+            // Render Custom Expenses inside table
+            const customTbody = document.getElementById('tbl-custom-body');
+            customTbody.innerHTML = '';
+            if(activeCustomCosts.length > 0) {
+                const header = document.createElement('tr');
+                header.className = 'bg-brand-dark/40 text-brand-glow text-[10px] tracking-widest uppercase font-bold text-center';
+                header.innerHTML = '<td colspan="2" class="p-2 border-y border-purple-800">Custom Expenses Ledger</td>';
+                customTbody.appendChild(header);
+                
+                activeCustomCosts.forEach(c => {
+                    const row = document.createElement('tr');
+                    row.className = 'border-b border-purple-900/50 hover:bg-purple-900/20 transition-colors';
+                    row.innerHTML = `
+                        <td class="p-3 text-purple-200 pl-6 border-l-2 border-brand-glow bg-purple-900/10">${c.name}</td>
+                        <td class="p-3 text-right text-white font-mono bg-purple-900/10">$${c.cost.toFixed(2)}</td>
+                    `;
+                    customTbody.appendChild(row);
+                });
+            }
+            
+            // Mathematical Table Footer Recap
+            document.getElementById('tbl-gross').innerText = '$' + data.gross_annual_cost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            document.getElementById('tbl-income').innerText = '+$' + data.annual_income.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            document.getElementById('tbl-net').innerText = '$' + data.net_burn_rate.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+
+            // Update Stability logic
+            const scoreEl = document.getElementById('stability-score');
+            scoreEl.innerText = data.stability_score;
+            scoreEl.className = 'text-2xl font-bold leading-none ' + 
+               (data.stability_score >= 75 ? 'text-green-400' : 
+                data.stability_score >= 50 ? 'text-yellow-400' : 'text-red-500');
+
+            // Draw Chart
+            const ctx = document.getElementById('runwayChart').getContext('2d');
+            const labels = ['Starting Capital', ...data.trajectory.map(x => x.year)];
+            const activeData = [parseFloat(document.getElementById('capital').value || 0), ...data.trajectory.map(x => x.remaining_balance)];
+
+            if (runwayChartInstance) runwayChartInstance.destroy();
+
+            const endCapital = activeData[activeData.length - 1];
+            const startCap = activeData[0];
+            const graphColor = endCapital > startCap ? '#34d399' : '#A855F7';
+            const bgColor = endCapital > startCap ? 'rgba(52, 211, 153, 0.2)' : 'rgba(168, 85, 247, 0.2)';
+
+            runwayChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Remaining Capital ($)',
+                        data: activeData,
+                        borderColor: graphColor,
+                        backgroundColor: bgColor,
+                        borderWidth: 3,
+                        pointBackgroundColor: '#fff',
+                        pointBorderColor: graphColor,
+                        pointRadius: 5,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            grid: { color: 'rgba(139, 92, 246, 0.1)' },
+                            ticks: { color: '#C4B5FD' }
+                        },
+                        x: {
+                            grid: { color: 'rgba(139, 92, 246, 0.1)' },
+                            ticks: { color: '#C4B5FD' }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { backgroundColor: 'rgba(15, 5, 24, 0.9)', titleColor: graphColor, bodyColor: '#fff', borderColor: 'rgba(139, 92, 246, 0.3)', borderWidth: 1 }
+                    }
+                }
+            });
+        }
+
+        updateSimulation();
+    </script>
+</body>
+</html>

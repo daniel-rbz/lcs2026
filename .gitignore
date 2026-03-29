@@ -1,2 +1,18 @@
+# env
 .env
-env
+
+# venv
+env/
+venv/
+.venv/
+Scripts/
+
+# python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# flask temp
+*.log

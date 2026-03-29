@@ -1,28 +1,39 @@
-# lcs2026 Hackathon Starter
+# Budget Hawk (Laurier Financial OS)
 
-Super minimal Flask backend + frontend skeleton.
+An AI-powered, single-page web dashboard designed to calculate, project, and visually graph a Laurier student's financial runway across their degree.
 
-## Structure
+## Features
+- **Dynamic Timeline**: Toggle between Academic Year and Academic Term.
+- **Data-Driven**: Pulls real Laurier residence, meal plan, and tuition data.
+- **Gemini Copilot**: Upload PDFs/Receipts to auto-extract financial data as custom expenses.
+- **Flight Plan Export**: Generate beautiful A4 Financial Statements in PDF format natively!
 
-- `backend/app.py`: Flask app and API endpoint
-- `backend/requirements.txt`: Python dependencies
-- `frontend/index.html`: Basic UI
-- `frontend/app.js`: Calls backend API
-- `frontend/styles.css`: Basic styles
+## Installation Setup (For the Team)
 
-## Quick start
-
-1. Create and activate a virtual environment.
-2. Install dependencies:
+1. Clone the repository.
+2. Initialize and activate a Python virtual environment:
    ```bash
-   pip install -r backend/requirements.txt
+   python -m venv env
+   .\env\Scripts\activate
    ```
-3. Run the Flask app:
+3. Install the specific build dependencies:
    ```bash
-   python backend/app.py
+   pip install -r requirements.txt
    ```
-4. Open http://127.0.0.1:5000 in your browser.
 
-## API endpoint
+## API Configuration
 
-- `GET /api/health`
+1. You will see a `.env.example` file in the root directory.
+2. Copy it and rename it to exactly `.env` (this is ignored by Git, so it is safe securely locally).
+3. Paste a live Gemini 2.5 Flash API key into it:
+   ```text
+   GEMINI_API_KEY=your_key_here
+   ```
+
+## Running the Dashboard
+
+Simply execute the main application:
+```bash
+python app.py
+```
+Then navigate to `http://127.0.0.1:8000` in your browser!
