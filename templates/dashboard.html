@@ -4,13 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Budget Hawk | Financial Flight Cockpit</title>
+    <title>BudgetHawk | Financial Flight Cockpit</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- HTML2PDF CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -124,6 +123,215 @@
             max-width: 600px;
             text-align: center;
         }
+
+        /* ===== TAB NAVIGATION ===== */
+        .tab-nav {
+            display: flex;
+            gap: 0;
+            border-bottom: 2px solid rgba(139, 92, 246, 0.2);
+            margin-bottom: 24px;
+        }
+        .tab-btn {
+            padding: 14px 28px;
+            font-size: 13px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: rgba(168, 85, 247, 0.5);
+            background: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .tab-btn:hover {
+            color: rgba(168, 85, 247, 0.8);
+            background: rgba(139, 92, 246, 0.05);
+        }
+        .tab-btn.active {
+            color: #A855F7;
+            border-bottom-color: #A855F7;
+            text-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
+        }
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #A855F7, #6366f1);
+            border-radius: 2px 2px 0 0;
+        }
+        .tab-content { display: none; animation: tabFadeIn 0.5s ease; }
+        .tab-content.active { display: block; }
+        @keyframes tabFadeIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== TRAJECTORY STYLES ===== */
+        .traj-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .traj-input-group label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #a78bfa;
+            font-weight: 700;
+        }
+        .traj-input-group input,
+        .traj-input-group select {
+            background: rgba(15, 5, 24, 0.8) !important;
+            border: 1px solid rgba(139, 92, 246, 0.4) !important;
+            border-radius: 8px;
+            padding: 10px 14px;
+            color: #fff !important;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.25s ease;
+        }
+        .traj-input-group input:focus,
+        .traj-input-group select:focus {
+            outline: none;
+            border-color: #A855F7 !important;
+            box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.15);
+        }
+
+        .traj-output-card {
+            background: rgba(30, 17, 42, 0.5);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(139, 92, 246, 0.25);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .traj-output-card:hover {
+            border-color: rgba(139, 92, 246, 0.5);
+            box-shadow: 0 4px 20px rgba(139, 92, 246, 0.1);
+        }
+        .traj-output-card .label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #a78bfa;
+            font-weight: 800;
+            margin-bottom: 6px;
+        }
+        .traj-output-card .value {
+            font-size: 28px;
+            font-weight: 900;
+            color: #fff;
+            line-height: 1.1;
+        }
+        .traj-output-card .sub {
+            font-size: 11px;
+            color: #7c3aed;
+            margin-top: 4px;
+            font-weight: 600;
+        }
+
+        /* ===== ETF CARDS ===== */
+        .etf-card {
+            background: rgba(30, 17, 42, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 14px;
+            padding: 24px;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        .etf-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--etf-color, #A855F7), transparent);
+        }
+        .etf-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(139, 92, 246, 0.6);
+            box-shadow: 0 12px 40px rgba(139, 92, 246, 0.15);
+        }
+        .etf-ticker {
+            font-size: 24px;
+            font-weight: 900;
+            letter-spacing: -0.5px;
+            margin-bottom: 2px;
+        }
+        .etf-provider {
+            font-size: 11px;
+            color: #a78bfa;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .etf-mer {
+            display: inline-block;
+            background: rgba(139, 92, 246, 0.15);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 6px;
+            padding: 3px 10px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #c4b5fd;
+            margin-top: 8px;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 400px;
+        }
+
+        .salary-loading {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #a78bfa;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .salary-loading .dot {
+            width: 6px; height: 6px;
+            background: #A855F7;
+            border-radius: 50%;
+            animation: salaryPulse 1.2s infinite ease-in-out;
+        }
+        .salary-loading .dot:nth-child(2) { animation-delay: 0.15s; }
+        .salary-loading .dot:nth-child(3) { animation-delay: 0.3s; }
+        @keyframes salaryPulse {
+            0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+
+        .debt-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            background: rgba(239, 68, 68, 0.08);
+            border: 1px solid rgba(239, 68, 68, 0.25);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .debt-toggle:hover {
+            background: rgba(239, 68, 68, 0.12);
+        }
+        .debt-toggle input[type=checkbox] {
+            accent-color: #A855F7;
+            width: 16px;
+            height: 16px;
+        }
     </style>
 </head>
 
@@ -138,7 +346,7 @@
         <!-- Step 0: Welcome -->
         <div
             class="wizard-step absolute inset-0 flex flex-col justify-center items-center text-center transition-all duration-700 opacity-0 translate-y-8 pointer-events-none p-6">
-            <h1 class="text-5xl md:text-7xl font-extrabold text-brand-glow glow-text tracking-tight mb-4">Budget Hawk
+            <h1 class="text-5xl md:text-7xl font-extrabold text-brand-glow glow-text tracking-tight mb-4">BudgetHawk
             </h1>
             <p class="text-purple-300 text-lg md:text-xl max-w-lg mb-12">Calculate your academic runway. Chronological,
                 precision budgeting.</p>
@@ -310,262 +518,521 @@
 
         <!-- Top Navigation Bar -->
         <nav
-            class="flex justify-between items-center bg-brand-dark/90 border-b border-purple-800/80 p-4 sticky top-0 z-40 backdrop-blur-xl mb-6 shadow-lg shadow-purple-900/20">
+            class="flex justify-between items-center bg-brand-dark/90 border-b border-purple-800/80 p-4 sticky top-0 z-40 backdrop-blur-xl shadow-lg shadow-purple-900/20">
             <div class="flex items-center gap-4 pl-4">
                 <div>
-                    <div class="text-3xl font-extrabold text-brand-glow glow-text tracking-tight leading-none">
-                        Budget
-                        Hawk</div>
-                    <div class="text-[10px] text-purple-400 font-mono tracking-widest uppercase mt-1">Chronological
-                        View
+                    <div class="text-3xl font-extrabold text-brand-glow glow-text tracking-tight leading-none">BudgetHawk</div>
+                    <div class="text-[10px] text-purple-400 font-mono tracking-widest uppercase mt-1">Financial
+                        Flight Cockpit
                     </div>
                 </div>
             </div>
             <div class="flex items-center gap-4 pr-4">
-                <input type="file" id="invoiceUpload" accept="image/*,application/pdf" class="hidden"
-                    onchange="handleAiUpload(event)">
-                <label for="invoiceUpload" id="uploadLabel"
-                    class="cursor-pointer border border-brand-accent text-purple-200 hover:bg-brand-accent/20 rounded px-4 py-2 text-xs font-semibold flex items-center gap-2 transition">
-                    ✨ Gemini Vision Parser
-                </label>
                 <button type="button" onclick="exportSettings()"
                     class="border border-cyan-500/60 text-cyan-300 hover:bg-cyan-500/20 rounded px-4 py-2 text-xs font-semibold flex items-center gap-2 transition">
                     💾 Export Settings
                 </button>
-                <button type="button" onclick="exportLayout()"
-                    class="border border-green-500/60 text-green-300 hover:bg-green-500/20 rounded px-4 py-2 text-xs font-semibold flex items-center gap-2 transition">
-                    📄 Export PDF Statement
-                </button>
+
             </div>
         </nav>
 
-        <div class="max-w-7xl mx-auto px-6 h-full flex flex-col lg:flex-row gap-6">
-
-            <!-- Global Variable Controller Panel -->
-            <div class="cockpit-panel p-6 w-full lg:w-1/3 flex flex-col space-y-4 max-h-[85vh] overflow-y-auto">
-                <h3 class="text-brand-glow font-bold mb-2 uppercase tracking-wide border-b border-brand-accent/30 pb-2">
-                    Global Settings</h3>
-
-                <div class="grid grid-cols-2 gap-2 mt-2">
-                    <div>
-                        <label class="block text-[10px] uppercase text-purple-300 mb-1">Campus</label>
-                        <select id="campus" class="w-full rounded bg-brand-dark p-2 text-xs std-input">
-                            <option value="Waterloo">Waterloo</option>
-                            <option value="Brantford">Brantford</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-[10px] uppercase text-purple-300 mb-1">Residency</label>
-                        <select id="residency" class="w-full rounded bg-brand-dark p-2 text-xs std-input">
-                            <option value="Ontario">ON</option>
-                            <option value="Non-Ontario">Non-ON</option>
-                            <option value="International">Intl</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-[10px] uppercase text-purple-300 mb-1">Degree</label>
-                    <select id="degree" class="w-full rounded bg-brand-dark p-2 text-xs std-input"></select>
-                </div>
-
-                <div class="grid grid-cols-2 gap-2">
-                    <div>
-                        <label class="block text-[10px] uppercase text-purple-300 mb-1">Credits/Term</label>
-                        <input type="number" step="0.25" id="credits"
-                            class="w-full rounded bg-brand-dark p-2 text-xs std-input">
-                    </div>
-                    <div>
-                        <label class="block text-[10px] uppercase text-purple-300 mb-1">Living</label>
-                        <select id="living_mode" class="w-full rounded bg-brand-dark p-2 text-xs std-input"
-                            onchange="toggleDashLiving()">
-                            <option value="Residence">Res</option>
-                            <option value="Renting">Rent</option>
-                            <option value="Home">Home</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Living Conditional block -->
-                <div id="dash-res-div" class="space-y-2 border border-purple-800/50 p-2 rounded bg-brand-dark/50">
-                    <select id="residence_cost" class="w-full rounded bg-brand-dark p-2 text-[10px] std-input"></select>
-                    <select id="meal_cost" class="w-full rounded bg-brand-dark p-2 text-[10px] std-input"></select>
-                </div>
-                <div id="dash-rent-div"
-                    class="hidden space-y-2 border border-purple-800/50 p-2 rounded bg-brand-dark/50">
-                    <div class="flex gap-2 text-xs">
-                        <input type="number" id="monthly_rent" class="w-1/2 rounded bg-brand-dark p-2 std-input"
-                            placeholder="Rent/mo">
-                        <input type="number" id="monthly_food" class="w-1/2 rounded bg-brand-dark p-2 std-input"
-                            placeholder="Food/mo">
-                    </div>
-                </div>
-
-                <!-- Timeline Conditional block -->
-                <div class="border border-purple-800/50 p-2 rounded bg-brand-dark/50 grid grid-cols-2 gap-2">
-                    <div>
-                        <label class="block text-[9px] uppercase text-purple-400">Start M/Y</label>
-                        <div class="flex text-xs">
-                            <select id="start_month" class="w-1/2 rounded-l bg-brand-dark p-1 std-input border-r-0">
-                                <option value="9">Sep</option>
-                                <option value="1">Jan</option>
-                                <option value="5">May</option>
-                            </select>
-                            <select id="start_year" class="w-1/2 rounded-r bg-brand-dark p-1 std-input">
-                                <option value="2024">2024</option>
-                                <option value="2025">2025</option>
-                                <option value="2026">2026</option>
-                                <option value="2027">2027</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-[9px] uppercase text-purple-400">Gen Terms</label>
-                        <div class="flex text-xs">
-                            <select id="terms_per_year" class="w-1/2 rounded-l bg-brand-dark p-1 std-input border-r-0">
-                                <option value="2">2/yr</option>
-                                <option value="3">3/yr</option>
-                            </select>
-                            <select id="years" class="w-1/2 rounded-r bg-brand-dark p-1 std-input">
-                                <option value="1">1yr</option>
-                                <option value="2">2yr</option>
-                                <option value="3">3yr</option>
-                                <option value="4">4yr</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Transport -->
-                <div class="space-y-2 border border-purple-800/50 p-2 rounded bg-brand-dark/50">
-                    <label class="block text-[10px] uppercase text-purple-300 font-bold">Transport System</label>
-                    <select id="transport_mode" class="w-full rounded bg-brand-dark p-2 text-xs std-input"
-                        onchange="toggleDashTransport()">
-                        <option value="Walk">Walking</option>
-                        <option value="Transit">Transit</option>
-                        <option value="Car">Car</option>
-                    </select>
-
-                    <input type="hidden" id="dash_extra_transit" value="0">
-                    <input type="hidden" id="dash_car_model" value="">
-                    <input type="hidden" id="dash_distance_km" value="0">
-                    <input type="hidden" id="dash_manual_gas" value="0">
-
-                    <div id="dash-trans-opts" class="hidden text-xs space-y-2 mt-2">
-                        <!-- Filled by JS -->
-                    </div>
-                </div>
-
-                <!-- Income -->
-                <div class="border border-green-900/50 p-2 rounded bg-green-900/10">
-                    <label class="block text-[10px] uppercase text-green-400 font-bold mb-1">Job Income Engine
-                        ($)</label>
-                    <div class="flex gap-2">
-                        <input type="number" id="income_amount" value="0"
-                            class="std-input w-1/3 rounded p-2 text-xs bg-brand-dark">
-                        <select id="income_freq" class="std-input w-2/3 rounded p-2 text-xs bg-brand-dark">
-                            <option value="weekly">Weekly</option>
-                            <option value="bi-weekly">Bi-weekly</option>
-                        </select>
-                    </div>
-                </div>
+        <!-- Tab Navigation -->
+        <div class="max-w-7xl mx-auto px-6 mt-4">
+            <div class="tab-nav">
+                <button class="tab-btn active" onclick="switchTab('budget')" id="tab-btn-budget">💰 Expense Command Centre</button>
+                <button class="tab-btn" onclick="switchTab('trajectory')" id="tab-btn-trajectory">📈 Financial Trajectory</button>
             </div>
-
-            <!-- Dashboard Visuals -->
-            <div class="w-full lg:w-2/3 space-y-6 flex flex-col">
-                <!-- Data HUD -->
-                <div class="grid grid-cols-3 gap-4">
-                    <div class="cockpit-panel p-4 text-center border-t-2 border-red-500/50">
-                        <div class="text-[10px] tracking-widest text-red-400 mb-1 uppercase font-bold">Total Gross
-                            Outflow</div>
-                        <div id="cost-gross" class="text-xl font-bold text-red-300">$0.00</div>
-                    </div>
-                    <div class="cockpit-panel p-4 text-center border-t-2 border-green-500/50">
-                        <div class="text-[10px] tracking-widest text-green-400 mb-1 uppercase font-bold">Total Job
-                            Inflow</div>
-                        <div id="cost-income" class="text-xl font-bold text-green-300">+$0.00</div>
-                    </div>
-                    <div class="cockpit-panel p-4 text-center border-t-2 border-brand-accent">
-                        <div class="text-[10px] tracking-widest text-brand-glow mb-1 uppercase font-bold">Net Total
-                            Burn
-                        </div>
-                        <div id="cost-net" class="text-2xl font-black text-brand-glow drop-shadow-lg">$0.00</div>
-                    </div>
-                </div>
-
-                <!-- Master Term List -->
-                <div class="cockpit-panel p-6 flex-1 overflow-y-auto">
-                    <h2 class="text-lg font-bold text-brand-accent mb-4 border-b border-brand-accent/30 pb-2">
-                        Chronological Invoice Ledgers</h2>
-                    <div id="termCardsContainer" class="space-y-4">
-                        <!-- Rendered by JS -->
-                    </div>
-                </div>
-            </div>
-
         </div>
+
+        <!-- ====== TAB 1: EXPENSE COMMAND CENTRE ====== -->
+        <div id="tab-budget" class="tab-content active">
+            <div class="max-w-7xl mx-auto px-6 h-full flex flex-col lg:flex-row gap-6">
+
+                <!-- Global Variable Controller Panel -->
+                <div class="cockpit-panel p-6 w-full lg:w-1/3 flex flex-col space-y-4 max-h-[85vh] overflow-y-auto">
+                    <h3 class="text-brand-glow font-bold mb-2 uppercase tracking-wide border-b border-brand-accent/30 pb-2">
+                        User University Path</h3>
+
+                    <div class="grid grid-cols-2 gap-2 mt-2">
+                        <div>
+                            <label class="block text-[10px] uppercase text-purple-300 mb-1">Campus</label>
+                            <select id="campus" class="w-full rounded bg-brand-dark p-2 text-xs std-input">
+                                <option value="Waterloo">Waterloo</option>
+                                <option value="Brantford">Brantford</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] uppercase text-purple-300 mb-1">Residency</label>
+                            <select id="residency" class="w-full rounded bg-brand-dark p-2 text-xs std-input">
+                                <option value="Ontario">ON</option>
+                                <option value="Non-Ontario">Non-ON</option>
+                                <option value="International">Intl</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] uppercase text-purple-300 mb-1">Degree</label>
+                        <select id="degree" class="w-full rounded bg-brand-dark p-2 text-xs std-input"></select>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-[10px] uppercase text-purple-300 mb-1">Credits/Term</label>
+                            <input type="number" step="0.25" id="credits"
+                                class="w-full rounded bg-brand-dark p-2 text-xs std-input">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] uppercase text-purple-300 mb-1">Living</label>
+                            <select id="living_mode" class="w-full rounded bg-brand-dark p-2 text-xs std-input"
+                                onchange="toggleDashLiving()">
+                                <option value="Residence">Res</option>
+                                <option value="Renting">Rent</option>
+                                <option value="Home">Home</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Living Conditional block -->
+                    <div id="dash-res-div" class="space-y-2 border border-purple-800/50 p-2 rounded bg-brand-dark/50">
+                        <select id="residence_cost" class="w-full rounded bg-brand-dark p-2 text-[10px] std-input"></select>
+                        <select id="meal_cost" class="w-full rounded bg-brand-dark p-2 text-[10px] std-input"></select>
+                    </div>
+                    <div id="dash-rent-div"
+                        class="hidden space-y-2 border border-purple-800/50 p-2 rounded bg-brand-dark/50">
+                        <div class="flex gap-2 text-xs">
+                            <input type="number" id="monthly_rent" class="w-1/2 rounded bg-brand-dark p-2 std-input"
+                                placeholder="Rent/mo">
+                            <input type="number" id="monthly_food" class="w-1/2 rounded bg-brand-dark p-2 std-input"
+                                placeholder="Food/mo">
+                        </div>
+                    </div>
+
+                    <!-- Timeline Conditional block -->
+                    <div class="border border-purple-800/50 p-2 rounded bg-brand-dark/50 grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-[9px] uppercase text-purple-400">Start M/Y</label>
+                            <div class="flex text-xs">
+                                <select id="start_month" class="w-1/2 rounded-l bg-brand-dark p-1 std-input border-r-0">
+                                    <option value="9">Sep</option>
+                                    <option value="1">Jan</option>
+                                    <option value="5">May</option>
+                                </select>
+                                <select id="start_year" class="w-1/2 rounded-r bg-brand-dark p-1 std-input">
+                                    <option value="2024">2024</option>
+                                    <option value="2025">2025</option>
+                                    <option value="2026">2026</option>
+                                    <option value="2027">2027</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-[9px] uppercase text-purple-400">Gen Terms</label>
+                            <div class="flex text-xs">
+                                <select id="terms_per_year" class="w-1/2 rounded-l bg-brand-dark p-1 std-input border-r-0">
+                                    <option value="2">2/yr</option>
+                                    <option value="3">3/yr</option>
+                                </select>
+                                <select id="years" class="w-1/2 rounded-r bg-brand-dark p-1 std-input">
+                                    <option value="1">1yr</option>
+                                    <option value="2">2yr</option>
+                                    <option value="3">3yr</option>
+                                    <option value="4">4yr</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Transport -->
+                    <div class="space-y-2 border border-purple-800/50 p-2 rounded bg-brand-dark/50">
+                        <label class="block text-[10px] uppercase text-purple-300 font-bold">Transport System</label>
+                        <select id="transport_mode" class="w-full rounded bg-brand-dark p-2 text-xs std-input"
+                            onchange="toggleDashTransport()">
+                            <option value="Walk">Walking</option>
+                            <option value="Transit">Transit</option>
+                            <option value="Car">Car</option>
+                        </select>
+
+                        <input type="hidden" id="dash_extra_transit" value="0">
+                        <input type="hidden" id="dash_car_model" value="">
+                        <input type="hidden" id="dash_distance_km" value="0">
+                        <input type="hidden" id="dash_manual_gas" value="0">
+
+                        <div id="dash-trans-opts" class="hidden text-xs space-y-2 mt-2">
+                            <!-- Filled by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Income (hidden, kept for JS compatibility) -->
+                    <div style="display:none">
+                        <input type="number" id="income_amount" value="0">
+                        <select id="income_freq"><option value="weekly">Weekly</option><option value="bi-weekly">Bi-weekly</option></select>
+                    </div>
+                </div>
+
+                <!-- Dashboard Visuals -->
+                <div class="w-full lg:w-2/3 space-y-6 flex flex-col">
+                    <!-- Data HUD -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="cockpit-panel p-4 text-center border-t-2 border-red-500/50">
+                            <div class="text-[10px] tracking-widest text-red-400 mb-1 uppercase font-bold">Total Tuition</div>
+                            <div id="cost-gross" class="text-xl font-bold text-red-300">$0.00</div>
+                        </div>
+                        <div class="cockpit-panel p-4 text-center border-t-2 border-brand-accent">
+                            <div class="text-[10px] tracking-widest text-brand-glow mb-1 uppercase font-bold">Avg Tuition / Year</div>
+                            <div id="cost-net" class="text-2xl font-black text-brand-glow drop-shadow-lg">$0.00</div>
+                        </div>
+                    </div>
+                    <!-- Hidden for JS compatibility -->
+                    <div id="cost-income" style="display:none">+$0.00</div>
+
+                    <!-- Master Term List -->
+                    <div class="cockpit-panel p-6 flex-1 overflow-y-auto">
+                        <h2 class="text-lg font-bold text-brand-accent mb-4 border-b border-brand-accent/30 pb-2">
+                            Laurier Term Invoices (Estimate)</h2>
+                        <div id="termCardsContainer" class="space-y-4">
+                            <!-- Rendered by JS -->
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div> <!-- END TAB BUDGET -->
+
+        <!-- ====== TAB 2: FINANCIAL TRAJECTORY ====== -->
+        <div id="tab-trajectory" class="tab-content">
+
+            <!-- ===== TRAJECTORY ONBOARDING ===== -->
+            <div id="trajOnboarding" class="max-w-2xl mx-auto px-6 py-16 text-center">
+                <div class="mb-8">
+                    <div class="text-6xl mb-4">🚀</div>
+                    <h2 class="text-4xl font-extrabold text-brand-glow glow-text tracking-tight mb-3">Your Financial Future</h2>
+                    <p class="text-purple-300 text-base max-w-md mx-auto">Let's estimate your post-graduation earning potential based on your degree and career goals.</p>
+                </div>
+
+                <!-- Degree Display -->
+                <div class="cockpit-panel p-5 mb-6 inline-block">
+                    <div class="text-[10px] uppercase tracking-widest text-purple-500 font-bold mb-1">Your Program</div>
+                    <div id="trajOnboardDegree" class="text-lg font-bold text-white">—</div>
+                </div>
+
+                <!-- Job Title Input -->
+                <div class="mt-6 mb-8">
+                    <label class="block text-purple-400 text-sm font-bold mb-3 tracking-wide">What's your ideal job title after graduation?</label>
+                    <input type="text" id="trajJobTitle" placeholder="e.g. Software Developer, Financial Analyst, Marketing Manager..."
+                        class="w-full max-w-lg mx-auto block text-center text-lg font-bold rounded-xl p-4 bg-brand-dark/80 border-2 border-purple-700/50 text-white placeholder-purple-600 focus:outline-none focus:border-brand-glow transition-all duration-300"
+                        style="background: rgba(15, 5, 24, 0.8) !important;"
+                        onkeydown="if(event.key==='Enter') estimateJobSalary()">
+                </div>
+
+                <!-- Estimate Button -->
+                <button id="trajEstimateBtn" onclick="estimateJobSalary()"
+                    class="wiz-btn text-lg shadow-lg shadow-purple-900/50 px-10 py-4 !bg-gradient-to-r !from-purple-600 !to-indigo-600 !text-white hover:!shadow-purple-500/30">
+                    ✨ Estimate My Salary
+                </button>
+
+                <!-- Loading State -->
+                <div id="trajEstimateLoading" class="mt-8" style="display:none">
+                    <div class="salary-loading justify-center">
+                        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+                        <span>Asking Gemini AI to estimate your starting salary...</span>
+                    </div>
+                </div>
+
+                <!-- Result Card (hidden until API responds) -->
+                <div id="trajSalaryResult" class="mt-8" style="display:none">
+                    <div class="cockpit-panel p-8 max-w-md mx-auto" style="border-top: 3px solid #22c55e;">
+                        <div class="text-[10px] uppercase tracking-widest text-green-400 font-bold mb-1">Estimated Starting Salary</div>
+                        <div id="trajSalaryAmount" class="text-5xl font-black text-green-400 glow-text my-3">$0</div>
+                        <div id="trajSalaryJobTitle" class="text-sm text-purple-300 mb-2"></div>
+                        <div id="trajSalaryConfBadge" class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] font-bold border mt-2"
+                            style="background:rgba(34,197,94,0.1); border-color:rgba(34,197,94,0.3); color:#86efac;">
+                            <span id="trajSalaryConfText">—</span>
+                        </div>
+                        <p class="text-[11px] text-purple-500 mt-4">This is a Gemini AI estimate based on Canadian entry-level market data. You can adjust it in the calculator.</p>
+                    </div>
+
+                    <button onclick="revealTrajectoryCalculator()"
+                        class="wiz-btn text-lg mt-8 shadow-lg shadow-purple-900/50 px-10 py-4 !bg-gradient-to-r !from-green-600 !to-emerald-600 !text-white hover:!shadow-green-500/30">
+                        📈 View Full Trajectory →
+                    </button>
+                </div>
+            </div>
+
+            <!-- ===== MAIN TRAJECTORY CONTENT (hidden until salary is estimated) ===== -->
+            <div id="trajMainContent" style="display:none">
+            <div class="max-w-7xl mx-auto px-6 space-y-8 pb-12">
+
+                <!-- Section Header -->
+                <div class="text-center pt-2">
+                    <h2 class="text-3xl font-extrabold text-brand-glow glow-text tracking-tight">Financial Trajectory</h2>
+                    <p class="text-purple-400 text-sm mt-2 max-w-xl mx-auto">Understand how your education investment shapes your path to financial freedom.</p>
+                </div>
+
+                <!-- ===== CALCULATOR SECTION ===== -->
+                <div class="cockpit-panel p-8">
+                    <h3 class="text-brand-glow font-bold mb-6 uppercase tracking-wide border-b border-brand-accent/30 pb-2 flex items-center gap-2">
+                        <span>🧮</span> Wealth Calculator
+                    </h3>
+
+                    <!-- Salary Auto-Fill Status -->
+                    <div id="salaryStatus" class="mb-4" style="display:none">
+                        <div class="salary-loading">
+                            <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+                            <span>Estimating salary for your program via Gemini AI...</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+                        <!-- Row 1: Core Inputs -->
+                        <div class="traj-input-group">
+                            <label>Gross Annual Salary (CAD)</label>
+                            <input type="number" id="traj-gross-salary" value="55000" oninput="recalcTrajectory()">
+                            <div id="salaryConfidence" class="text-[10px] text-purple-500 mt-1" style="display:none"></div>
+                        </div>
+                        <div class="traj-input-group">
+                            <label>After-Tax Salary (auto)</label>
+                            <input type="number" id="traj-net-salary" value="0" readonly style="opacity:0.7; cursor:not-allowed;">
+                            <div class="text-[10px] text-purple-500 mt-1">2025 Fed + Ontario brackets</div>
+                        </div>
+                        <div class="traj-input-group">
+                            <label>Your Age</label>
+                            <input type="number" id="traj-age" value="22" min="16" max="80" oninput="recalcTrajectory()">
+                        </div>
+                        <div class="traj-input-group">
+                            <label>Retirement Age</label>
+                            <input type="number" id="traj-retirement-age" value="65" min="30" max="90" oninput="recalcTrajectory()">
+                        </div>
+
+                        <!-- Row 2 -->
+                        <div class="traj-input-group">
+                            <label>Target Net Worth ($)</label>
+                            <input type="number" id="traj-target" value="1000000" step="50000" oninput="recalcTrajectory()">
+                        </div>
+                        <div class="traj-input-group">
+                            <label>Savings Rate (%)</label>
+                            <input type="number" id="traj-savings-rate" value="20" min="1" max="90" oninput="recalcTrajectory()">
+                        </div>
+                        <div class="traj-input-group">
+                            <label>Expected Return (%)</label>
+                            <input type="number" id="traj-return-rate" value="7" step="0.5" min="0" max="30" oninput="recalcTrajectory()">
+                        </div>
+                        <div class="traj-input-group">
+                            <label>Inflation Rate (%)</label>
+                            <input type="number" id="traj-inflation" value="2" step="0.1" min="0" max="15" oninput="recalcTrajectory()">
+                        </div>
+
+                        <!-- Row 3 -->
+                        <div class="traj-input-group">
+                            <label>Compounding</label>
+                            <select id="traj-compound-freq" onchange="recalcTrajectory()">
+                                <option value="1">Annually</option>
+                                <option value="4">Quarterly</option>
+                                <option value="12" selected>Monthly</option>
+                            </select>
+                        </div>
+                        <div class="traj-input-group col-span-1 md:col-span-2 lg:col-span-3">
+                            <div class="debt-toggle" onclick="document.getElementById('traj-debt-check').click()">
+                                <input type="checkbox" id="traj-debt-check" onclick="event.stopPropagation(); toggleDebtImport()">
+                                <div>
+                                    <div class="text-xs font-bold text-red-400">Import Education Debt</div>
+                                    <div class="text-[10px] text-red-300/60">Pull your net burn total from the Budget tab as starting debt</div>
+                                </div>
+                            </div>
+                            <div id="traj-debt-field" style="display:none" class="mt-2">
+                                <label class="text-[10px] uppercase text-red-400 font-bold tracking-wider">Starting Debt ($)</label>
+                                <input type="number" id="traj-debt" value="0" oninput="recalcTrajectory()" style="border-color: rgba(239, 68, 68, 0.4) !important;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tax Breakdown Mini -->
+                    <div id="taxBreakdownMini" class="mt-5 p-4 rounded-lg bg-black/30 border border-purple-900/30">
+                        <div class="text-[10px] uppercase tracking-widest text-purple-500 font-bold mb-3">2025 Tax Breakdown</div>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-center">
+                            <div>
+                                <div class="text-[9px] text-purple-400 uppercase">Federal Tax</div>
+                                <div id="tax-federal" class="text-sm font-bold text-red-300">$0</div>
+                            </div>
+                            <div>
+                                <div class="text-[9px] text-purple-400 uppercase">Ontario Tax</div>
+                                <div id="tax-provincial" class="text-sm font-bold text-red-300">$0</div>
+                            </div>
+                            <div>
+                                <div class="text-[9px] text-purple-400 uppercase">CPP + EI</div>
+                                <div id="tax-cpp-ei" class="text-sm font-bold text-red-300">$0</div>
+                            </div>
+                            <div>
+                                <div class="text-[9px] text-purple-400 uppercase">Effective Rate</div>
+                                <div id="tax-effective" class="text-sm font-bold text-brand-glow">0%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== OUTPUT CARDS ===== -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="traj-output-card" style="border-top: 3px solid #A855F7;">
+                        <div class="label">Years Until Retirement</div>
+                        <div class="value" id="traj-out-years">—</div>
+                        <div class="sub" id="traj-out-age-at-target"></div>
+                    </div>
+                    <div class="traj-output-card" style="border-top: 3px solid #22c55e;">
+                        <div class="label">Total Contributed</div>
+                        <div class="value" id="traj-out-contributed" style="color:#86efac">—</div>
+                        <div class="sub" id="traj-out-monthly-save"></div>
+                    </div>
+                    <div class="traj-output-card" style="border-top: 3px solid #3b82f6;">
+                        <div class="label">Investment Returns</div>
+                        <div class="value" id="traj-out-returns" style="color:#93c5fd">—</div>
+                        <div class="sub" id="traj-out-returns-pct"></div>
+                    </div>
+                    <div class="traj-output-card" style="border-top: 3px solid #f59e0b;">
+                        <div class="label">Inflation-Adj Target</div>
+                        <div class="value" id="traj-out-adj-target" style="color:#fcd34d">—</div>
+                        <div class="sub" id="traj-out-adj-years"></div>
+                    </div>
+                </div>
+
+                <!-- ===== NET WORTH CHART ===== -->
+                <div class="cockpit-panel p-6">
+                    <h3 class="text-brand-glow font-bold mb-4 uppercase tracking-wide border-b border-brand-accent/30 pb-2 flex items-center gap-2">
+                        <span>📊</span> Path to Financial Freedom
+                    </h3>
+                    <div class="chart-container">
+                        <canvas id="trajectoryChart"></canvas>
+                    </div>
+
+                    <!-- Year-by-Year Investment Ledger -->
+                    <div class="mt-6 border-t border-purple-900/40 pt-4">
+                        <button type="button" onclick="toggleInvestmentLedger()" class="text-[11px] uppercase tracking-widest text-purple-400 hover:text-brand-glow transition font-bold flex items-center gap-2 cursor-pointer mb-3">
+                            <span id="inv-ledger-arrow" class="inline-block transition-transform duration-200">▶</span> Year-by-Year Investment Ledger
+                        </button>
+                        <div id="investmentLedger" class="hidden overflow-x-auto">
+                            <table class="w-full text-left text-xs" id="investmentLedgerTable">
+                                <thead>
+                                    <tr class="border-b border-purple-800/50">
+                                        <th class="py-2 px-2 text-[9px] uppercase text-purple-500 tracking-widest font-bold">Year</th>
+                                        <th class="py-2 px-2 text-[9px] uppercase text-purple-500 tracking-widest font-bold">Age</th>
+                                        <th class="py-2 px-2 text-[9px] uppercase text-purple-500 tracking-widest font-bold text-right">Monthly</th>
+                                        <th class="py-2 px-2 text-[9px] uppercase text-purple-500 tracking-widest font-bold text-right">Annual Contribution</th>
+                                        <th class="py-2 px-2 text-[9px] uppercase text-purple-500 tracking-widest font-bold text-right" id="ledger-gains-header">Investment Gains</th>
+                                        <th class="py-2 px-2 text-[9px] uppercase text-purple-500 tracking-widest font-bold text-right">Net Worth</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="investmentLedgerBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== ETF RECOMMENDATIONS ===== -->
+                <div class="cockpit-panel p-8">
+                    <h3 class="text-brand-glow font-bold mb-2 uppercase tracking-wide border-b border-brand-accent/30 pb-2 flex items-center gap-2">
+                        <span>🏦</span> Smart ETF Recommendations
+                    </h3>
+                    <p class="text-purple-400 text-xs mb-6">For long-term wealth building (10+ year horizon), all-equity portfolios historically outperform balanced portfolios. These Canadian ETFs provide instant diversification across global markets.</p>
+
+                    <div id="etfRiskBadge" class="mb-6 inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold border" style="background:rgba(34,197,94,0.1); border-color:rgba(34,197,94,0.3); color:#86efac;">
+                        <span>⏳</span> <span id="etfRiskText">Calculating risk profile...</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+                        <!-- VEQT -->
+                        <div class="etf-card" style="--etf-color: #22c55e">
+                            <div class="etf-ticker" style="color:#22c55e">VEQT</div>
+                            <div class="etf-provider">Vanguard Canada</div>
+                            <div class="etf-mer">MER: 0.24%</div>
+                            <p class="text-purple-300 text-xs mt-4 leading-relaxed">Vanguard All-Equity ETF Portfolio. Holds ~13,000 stocks across 50+ countries. Simple, one-ticket global equity exposure.</p>
+                            <div class="mt-4 flex items-center gap-2">
+                                <div class="text-[10px] uppercase text-purple-500 font-bold tracking-wider">Nominal Return</div>
+                                <div class="text-sm font-bold text-green-400">~9-10% / yr</div>
+                            </div>
+                            <div class="mt-4 border-t border-purple-900/40 pt-3">
+                                <div class="text-[9px] uppercase text-purple-500 font-bold tracking-wider mb-2">Geographic Allocation (Q4 2025)</div>
+                                <div class="space-y-1">
+                                    <div class="flex justify-between text-[11px]"><span class="text-purple-300">🇨🇦 Canada</span><span class="font-bold text-white">30.6%</span></div>
+                                    <div class="flex justify-between text-[11px]"><span class="text-purple-300">🇺🇸 United States</span><span class="font-bold text-white">45.4%</span></div>
+                                    <div class="flex justify-between text-[11px]"><span class="text-purple-300">🌍 Developed (ex-NA)</span><span class="font-bold text-white">16.7%</span></div>
+                                    <div class="flex justify-between text-[11px]"><span class="text-purple-300">🌏 Emerging</span><span class="font-bold text-white">7.3%</span></div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- XEQT -->
+                        <div class="etf-card" style="--etf-color: #3b82f6">
+                            <div class="etf-ticker" style="color:#3b82f6">XEQT</div>
+                            <div class="etf-provider">iShares by BlackRock</div>
+                            <div class="etf-mer">MER: 0.20%</div>
+                            <p class="text-purple-300 text-xs mt-4 leading-relaxed">iShares Core Equity ETF Portfolio. Lowest MER of the group. ~9,000 stocks globally with heavier developed-market weighting.</p>
+                            <div class="mt-4 flex items-center gap-2">
+                                <div class="text-[10px] uppercase text-purple-500 font-bold tracking-wider">Nominal Return</div>
+                                <div class="text-sm font-bold text-blue-400">~9-10% / yr</div>
+                            </div>
+                            <div class="mt-4 border-t border-purple-900/40 pt-3">
+                                <div class="text-[9px] uppercase text-purple-500 font-bold tracking-wider mb-2">Geographic Allocation (Q4 2025)</div>
+                                <div class="space-y-1">
+                                    <div class="flex justify-between text-[11px]"><span class="text-purple-300">🇨🇦 Canada</span><span class="font-bold text-white">25.2%</span></div>
+                                    <div class="flex justify-between text-[11px]"><span class="text-purple-300">🇺🇸 United States</span><span class="font-bold text-white">43.5%</span></div>
+                                    <div class="flex justify-between text-[11px]"><span class="text-purple-300">🌍 Developed (ex-NA)</span><span class="font-bold text-white">25.9%</span></div>
+                                    <div class="flex justify-between text-[11px]"><span class="text-purple-300">🌏 Emerging</span><span class="font-bold text-white">5.2%</span></div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- ZEQT -->
+                        <div class="etf-card" style="--etf-color: #a855f7">
+                            <div class="etf-ticker" style="color:#a855f7">ZEQT</div>
+                            <div class="etf-provider">BMO Global Asset Mgmt</div>
+                            <div class="etf-mer">MER: 0.20%</div>
+                            <p class="text-purple-300 text-xs mt-4 leading-relaxed">BMO All-Equity Growth ETF. Highest emerging markets exposure of the group — greater diversification into developing economies.</p>
+                            <div class="mt-4 flex items-center gap-2">
+                                <div class="text-[10px] uppercase text-purple-500 font-bold tracking-wider">Nominal Return</div>
+                                <div class="text-sm font-bold text-purple-400">~8-10% / yr</div>
+                            </div>
+                            <div class="mt-4 border-t border-purple-900/40 pt-3">
+                                <div class="text-[9px] uppercase text-purple-500 font-bold tracking-wider mb-2">Geographic Allocation (Q4 2025)</div>
+                                <div class="space-y-1">
+                                    <div class="flex justify-between text-[11px]"><span class="text-purple-300">🇨🇦 Canada</span><span class="font-bold text-white">24.7%</span></div>
+                                    <div class="flex justify-between text-[11px]"><span class="text-purple-300">🇺🇸 United States</span><span class="font-bold text-white">49.4%</span></div>
+                                    <div class="flex justify-between text-[11px]"><span class="text-purple-300">🌍 Developed (ex-NA)</span><span class="font-bold text-white">17.5%</span></div>
+                                    <div class="flex justify-between text-[11px]"><span class="text-purple-300">🌏 Emerging</span><span class="font-bold text-white">8.3%</span></div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- TEQT -->
+                        <div class="etf-card" style="--etf-color: #f59e0b">
+                            <div class="etf-ticker" style="color:#f59e0b">TEQT</div>
+                            <div class="etf-provider">TD Asset Management</div>
+                            <div class="etf-mer">MER: 0.24%</div>
+                            <p class="text-purple-300 text-xs mt-4 leading-relaxed">TD All-Equity ETF Portfolio. Zero emerging markets exposure — focused purely on developed economies for lower volatility.</p>
+                            <div class="mt-4 flex items-center gap-2">
+                                <div class="text-[10px] uppercase text-purple-500 font-bold tracking-wider">Nominal Return</div>
+                                <div class="text-sm font-bold text-amber-400">~9-10% / yr</div>
+                            </div>
+                            <div class="mt-4 border-t border-purple-900/40 pt-3">
+                                <div class="text-[9px] uppercase text-purple-500 font-bold tracking-wider mb-2">Geographic Allocation (Q4 2025)</div>
+                                <div class="space-y-1">
+                                    <div class="flex justify-between text-[11px]"><span class="text-purple-300">🇨🇦 Canada</span><span class="font-bold text-white">25.5%</span></div>
+                                    <div class="flex justify-between text-[11px]"><span class="text-purple-300">🇺🇸 United States</span><span class="font-bold text-white">54.8%</span></div>
+                                    <div class="flex justify-between text-[11px]"><span class="text-purple-300">🌍 Developed (ex-NA)</span><span class="font-bold text-white">19.6%</span></div>
+                                    <div class="flex justify-between text-[11px]"><span class="text-purple-300">🌏 Emerging</span><span class="font-bold text-white">0.0%</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 p-4 rounded-lg bg-green-900/10 border border-green-800/30">
+                        <p class="text-green-300 text-xs leading-relaxed">💡 <strong>Why all-equity?</strong> With a <span id="etfHorizonYears">40+</span> year investment horizon, you have ample time to ride out market volatility. Historically, global equities have returned ~9-10% nominally (~7% after inflation), making them the optimal vehicle for long-term compound growth. All four ETFs achieve instant diversification — the key differences are MER and geographic weighting.</p>
+                    </div>
+                </div>
+
+            </div>
+            </div> <!-- END trajMainContent -->
+
+        </div> <!-- END TAB TRAJECTORY -->
+
     </div> <!-- END MAIN APP -->
 
-    <!-- Hidden Invoice Template -->
-    <div id="invoiceTemplateContainer" style="display: none; position: absolute; top: -9999px;">
-        <div id="invoiceTemplate"
-            style="background: white; color: #111; width: 800px; padding: 50px 40px; font-family: 'Inter', sans-serif; line-height: 1.5;">
-            <!-- Header -->
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px;">
-                <div>
-                    <h1 style="color: #7C3AED; font-size: 36px; font-weight: 900; margin: 0; letter-spacing: -1.5px;">
-                        Budget Hawk</h1>
-                    <p
-                        style="color: #888; font-size: 10px; text-transform: uppercase; font-weight: 700; letter-spacing: 3px; margin: 4px 0 0;">
-                        Student Financial Statement</p>
-                </div>
-                <div style="text-align: right; font-size: 11px; color: #555;">
-                    <p
-                        style="margin: 0; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #7C3AED;">
-                        Statement Date</p>
-                    <p style="margin: 2px 0 12px; font-size: 13px;" id="invDate"></p>
-                    <p id="invStudentInfo" style="margin: 0; color: #777; font-size: 10px;"></p>
-                </div>
-            </div>
-            <div
-                style="height: 3px; background: linear-gradient(90deg, #7C3AED, #6366f1, #a78bfa); border-radius: 2px; margin-bottom: 30px;">
-            </div>
 
-            <!-- Summary HUD -->
-            <div style="display: flex; gap: 12px; margin-bottom: 30px;">
-                <div
-                    style="flex: 1; background: #fef2f2; border: 1px solid #fca5a5; border-radius: 8px; padding: 14px; text-align: center;">
-                    <p
-                        style="margin: 0; font-size: 9px; text-transform: uppercase; font-weight: 800; color: #b91c1c; letter-spacing: 1px;">
-                        Total Expenses</p>
-                    <p id="invGross" style="margin: 4px 0 0; font-size: 20px; font-weight: 900; color: #dc2626;"></p>
-                </div>
-                <div
-                    style="flex: 1; background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; padding: 14px; text-align: center;">
-                    <p
-                        style="margin: 0; font-size: 9px; text-transform: uppercase; font-weight: 800; color: #15803d; letter-spacing: 1px;">
-                        Projected Income</p>
-                    <p id="invIncome" style="margin: 4px 0 0; font-size: 20px; font-weight: 900; color: #059669;"></p>
-                </div>
-                <div
-                    style="flex: 1; background: #f5f3ff; border: 1px solid #c4b5fd; border-radius: 8px; padding: 14px; text-align: center;">
-                    <p
-                        style="margin: 0; font-size: 9px; text-transform: uppercase; font-weight: 800; color: #6d28d9; letter-spacing: 1px;">
-                        Net Total</p>
-                    <p id="invNet" style="margin: 4px 0 0; font-size: 20px; font-weight: 900; color: #7C3AED;"></p>
-                </div>
-            </div>
-
-            <!-- Per-term breakdown tables injected here -->
-            <div id="invTermBreakdowns"></div>
-
-            <!-- Footer -->
-            <div style="margin-top: 40px; padding-top: 16px; border-top: 2px solid #e5e7eb;">
-                <p style="text-align: center; color: #aaa; font-size: 9px; font-style: italic; margin: 0;">This document
-                    is an estimate generated by Budget Hawk Financial OS. Actual fees may vary.</p>
-            </div>
-        </div>
-    </div>
 
 
 
@@ -585,11 +1052,28 @@
         ];
 
         function exportSettings() {
-            const save = { _version: 1, _timestamp: new Date().toISOString() };
+            const save = { _version: 2, _timestamp: new Date().toISOString() };
             SAVE_FIELDS.forEach(id => {
                 const el = document.getElementById(id);
                 if (el) save[id] = el.value;
             });
+
+            // Include Financial Trajectory data if available
+            const jobTitle = document.getElementById('trajJobTitle');
+            if (jobTitle && jobTitle.value.trim()) {
+                save.trajectory = {
+                    job_title: jobTitle.value.trim(),
+                    estimated_salary: window._estimatedSalary || null,
+                    gross_salary: document.getElementById('traj-gross-salary')?.value || null,
+                    age: document.getElementById('traj-age')?.value || null,
+                    retirement_age: document.getElementById('traj-retirement-age')?.value || null,
+                    target_net_worth: document.getElementById('traj-target')?.value || null,
+                    savings_rate: document.getElementById('traj-savings-rate')?.value || null,
+                    return_rate: document.getElementById('traj-return-rate')?.value || null,
+                    inflation_rate: document.getElementById('traj-inflation')?.value || null
+                };
+            }
+
             const jsonStr = JSON.stringify(save, null, 2);
             const blob = new Blob([jsonStr], { type: 'application/json;charset=utf-8' });
             const url = URL.createObjectURL(blob);
@@ -614,7 +1098,7 @@
                     const save = JSON.parse(e.target.result);
                     applySaveData(save);
                 } catch (err) {
-                    alert('Invalid save file. Please select a valid Budget Hawk .json file.');
+                    alert('Invalid save file. Please select a valid BudgetHawk .json file.');
                     console.error('Import Error:', err);
                 }
             };
@@ -654,81 +1138,37 @@
                 if (save.income_freq) document.getElementById('income_freq').value = save.income_freq;
                 if (save.dash_manual_gas) document.getElementById('dash_manual_gas').value = save.dash_manual_gas;
                 updateSimulation();
+
+                // Restore trajectory data if present
+                if (save.trajectory) {
+                    const t = save.trajectory;
+                    if (t.job_title) document.getElementById('trajJobTitle').value = t.job_title;
+                    if (t.estimated_salary) window._estimatedSalary = t.estimated_salary;
+                    if (t.gross_salary) document.getElementById('traj-gross-salary').value = t.gross_salary;
+                    if (t.age) document.getElementById('traj-age').value = t.age;
+                    if (t.retirement_age) document.getElementById('traj-retirement-age').value = t.retirement_age;
+                    if (t.target_net_worth) document.getElementById('traj-target').value = t.target_net_worth;
+                    if (t.savings_rate) document.getElementById('traj-savings-rate').value = t.savings_rate;
+                    if (t.return_rate) document.getElementById('traj-return-rate').value = t.return_rate;
+                    if (t.inflation_rate) document.getElementById('traj-inflation').value = t.inflation_rate;
+
+                    // Skip onboarding — go straight to calculator
+                    document.getElementById('trajOnboarding').style.display = 'none';
+                    document.getElementById('trajMainContent').style.display = 'block';
+
+                    // Show confidence badge in calculator
+                    const conf = document.getElementById('salaryConfidence');
+                    if (conf) {
+                        conf.style.display = 'block';
+                        conf.innerHTML = `<span style="color:#22c55e">●</span> Restored from save: ${t.job_title || 'imported'}`;
+                    }
+
+                    recalcTrajectory();
+                }
             }, 600);
         }
 
-        function exportLayout() {
-            if (!lastSimulationData) { alert("Please wait for simulation to finish calculating."); return; }
 
-            const now = new Date();
-            document.getElementById('invDate').innerText = now.toLocaleDateString('en-CA', { year: 'numeric', month: 'long', day: 'numeric' });
-
-            // Student context
-            const campus = document.getElementById('campus').value;
-            const residency = document.getElementById('residency').value;
-            const degree = document.getElementById('degree').value;
-            document.getElementById('invStudentInfo').innerText = `${campus} Campus · ${residency} · ${degree}`;
-
-            // Summary
-            document.getElementById('invGross').innerText = '$' + lastSimulationData.gross_cost.toLocaleString(undefined, { minimumFractionDigits: 2 });
-            document.getElementById('invIncome').innerText = '+$' + lastSimulationData.total_income.toLocaleString(undefined, { minimumFractionDigits: 2 });
-            document.getElementById('invNet').innerText = '$' + lastSimulationData.net_burn_rate.toLocaleString(undefined, { minimumFractionDigits: 2 });
-
-            // Build per-term breakdown tables
-            const container = document.getElementById('invTermBreakdowns');
-            container.innerHTML = '';
-
-            lastSimulationData.terms.forEach((t, idx) => {
-                let rows = '';
-                if (t.breakdown) {
-                    t.breakdown.forEach(b => {
-                        rows += `<tr style="border-bottom: 1px solid #f0f0f0;">
-                                <td style="padding: 6px 10px; font-size: 10px; color: #888; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">${b.category}</td>
-                                <td style="padding: 6px 10px; font-size: 11px; color: #333;">${b.name}</td>
-                                <td style="padding: 6px 10px; font-size: 11px; text-align: right; font-weight: 700; font-family: 'Courier New', monospace;">$${b.amount.toFixed(2)}</td>
-                            </tr>`;
-                    });
-                }
-
-                container.innerHTML += `
-                        <div style="margin-bottom: 24px; ${idx > 0 ? 'page-break-inside: avoid;' : ''}">
-                            <div style="display: flex; justify-content: space-between; align-items: center; background: #f5f3ff; border-radius: 6px 6px 0 0; padding: 10px 14px; border: 1px solid #e0d9f5; border-bottom: none;">
-                                <div>
-                                    <span style="font-size: 13px; font-weight: 900; color: #7C3AED; text-transform: uppercase; letter-spacing: 0.5px;">${t.name}</span>
-                                </div>
-                                <div style="font-size: 14px; font-weight: 900; color: #111;">$${t.total.toFixed(2)}</div>
-                            </div>
-                            <table style="width: 100%; border-collapse: collapse; border: 1px solid #e5e7eb; border-top: none; font-size: 11px;">
-                                <thead>
-                                    <tr style="background: #fafafa;">
-                                        <th style="padding: 6px 10px; text-align: left; font-size: 9px; color: #999; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; width: 22%;">Category</th>
-                                        <th style="padding: 6px 10px; text-align: left; font-size: 9px; color: #999; text-transform: uppercase; letter-spacing: 1px; font-weight: 700;">Description</th>
-                                        <th style="padding: 6px 10px; text-align: right; font-size: 9px; color: #999; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; width: 18%;">Amount</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${rows}
-                                    <tr style="background: #f5f3ff; border-top: 2px solid #7C3AED;">
-                                        <td colspan="2" style="padding: 8px 10px; font-size: 11px; font-weight: 900; color: #7C3AED; text-transform: uppercase;">Term Total</td>
-                                        <td style="padding: 8px 10px; text-align: right; font-size: 13px; font-weight: 900; color: #7C3AED; font-family: 'Courier New', monospace;">$${t.total.toFixed(2)}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>`;
-            });
-
-            const invContainer = document.getElementById('invoiceTemplateContainer');
-            const target = document.getElementById('invoiceTemplate');
-            invContainer.style.display = 'block';
-            html2pdf().set({
-                margin: [0.4, 0.3, 0.4, 0.3],
-                filename: 'Budget_Hawk_Financial_Statement.pdf',
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true },
-                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
-                pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
-            }).from(target).save().then(() => { invContainer.style.display = 'none'; });
-        }
 
         function filterDegreeOptions() {
             const camp = document.getElementById('wiz-campus').value;
@@ -1007,9 +1447,679 @@
 
             document.getElementById('cost-gross').innerText = '$' + data.gross_cost.toLocaleString(undefined, { minimumFractionDigits: 2 });
             document.getElementById('cost-income').innerText = '+$' + data.total_income.toLocaleString(undefined, { minimumFractionDigits: 2 });
-            document.getElementById('cost-net').innerText = '$' + data.net_burn_rate.toLocaleString(undefined, { minimumFractionDigits: 2 });
+            const avgPerYear = data.gross_cost / 4;
+            document.getElementById('cost-net').innerText = '$' + avgPerYear.toLocaleString(undefined, { minimumFractionDigits: 2 });
 
             renderTermCards(data.terms);
+        }
+
+        // ===== TAB SWITCHING =====
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById('tab-' + tabName).classList.add('active');
+            document.getElementById('tab-btn-' + tabName).classList.add('active');
+
+            if (tabName === 'trajectory') {
+                // Populate onboarding with the selected degree
+                const degreeEl = document.getElementById('degree');
+                if (degreeEl) {
+                    const degreeText = degreeEl.options[degreeEl.selectedIndex]?.text || degreeEl.value;
+                    document.getElementById('trajOnboardDegree').innerText = degreeText || 'Not selected';
+                }
+                // If already revealed, recalculate
+                if (document.getElementById('trajMainContent').style.display !== 'none') {
+                    recalcTrajectory();
+                }
+            }
+        }
+
+        // ===== 2025 CANADIAN TAX ENGINE =====
+        function calculate2025Tax(grossIncome) {
+            // --- 2025 Federal Tax Brackets ---
+            const federalBrackets = [
+                { min: 0,      max: 57375,   rate: 0.15 },
+                { min: 57375,  max: 114750,  rate: 0.205 },
+                { min: 114750, max: 158468,  rate: 0.26 },
+                { min: 158468, max: 220000,  rate: 0.29 },
+                { min: 220000, max: Infinity, rate: 0.33 }
+            ];
+            const federalBasicPersonal = 16129; // 2025 BPA
+
+            // --- 2025 Ontario Provincial Tax Brackets ---
+            const ontarioBrackets = [
+                { min: 0,      max: 52886,   rate: 0.0505 },
+                { min: 52886,  max: 105775,  rate: 0.0915 },
+                { min: 105775, max: 150000,  rate: 0.1116 },
+                { min: 150000, max: 220000,  rate: 0.1216 },
+                { min: 220000, max: Infinity, rate: 0.1316 }
+            ];
+            const ontarioBasicPersonal = 11865; // 2025 Ontario BPA
+
+            // --- CPP2 + EI 2025 ---
+            const cppMaxPensionable = 71300;
+            const cppExemption = 3500;
+            const cppRate = 0.0595;
+            // CPP2 second ceiling
+            const cpp2MaxPensionable = 81200;
+            const cpp2Rate = 0.04;
+
+            const eiMaxInsurable = 65700;
+            const eiRate = 0.0164;
+
+            function calcBracketTax(income, brackets, personalAmount) {
+                const taxableIncome = Math.max(0, income - personalAmount);
+                let tax = 0;
+                let remaining = taxableIncome;
+                let prevMax = 0;
+                for (const b of brackets) {
+                    const bracketWidth = b.max - b.min;
+                    const amountInBracket = Math.min(remaining, bracketWidth);
+                    if (amountInBracket <= 0) break;
+                    tax += amountInBracket * b.rate;
+                    remaining -= amountInBracket;
+                }
+                return tax;
+            }
+
+            const federalTax = calcBracketTax(grossIncome, federalBrackets, federalBasicPersonal);
+            const provincialTax = calcBracketTax(grossIncome, ontarioBrackets, ontarioBasicPersonal);
+
+            // CPP contributions
+            let cpp = 0;
+            if (grossIncome > cppExemption) {
+                const cppPensionable = Math.min(grossIncome, cppMaxPensionable) - cppExemption;
+                cpp = cppPensionable * cppRate;
+                // CPP2 (on earnings between first and second ceiling)
+                if (grossIncome > cppMaxPensionable) {
+                    const cpp2Pensionable = Math.min(grossIncome, cpp2MaxPensionable) - cppMaxPensionable;
+                    cpp += cpp2Pensionable * cpp2Rate;
+                }
+            }
+
+            // EI contributions
+            const ei = Math.min(grossIncome, eiMaxInsurable) * eiRate;
+
+            const totalDeductions = federalTax + provincialTax + cpp + ei;
+            const netIncome = grossIncome - totalDeductions;
+            const effectiveRate = grossIncome > 0 ? (totalDeductions / grossIncome) * 100 : 0;
+
+            return {
+                gross: grossIncome,
+                net: Math.max(0, netIncome),
+                federalTax: federalTax,
+                provincialTax: provincialTax,
+                cpp: cpp,
+                ei: ei,
+                cppEi: cpp + ei,
+                totalDeductions: totalDeductions,
+                effectiveRate: effectiveRate
+            };
+        }
+
+        // ===== TRAJECTORY CALCULATOR =====
+        let trajectoryChart = null;
+
+        function recalcTrajectory() {
+            const gross = parseFloat(document.getElementById('traj-gross-salary').value) || 0;
+            const age = parseInt(document.getElementById('traj-age').value) || 22;
+            const retirementAge = parseInt(document.getElementById('traj-retirement-age').value) || 65;
+            const target = parseFloat(document.getElementById('traj-target').value) || 1000000;
+            const savingsRate = (parseFloat(document.getElementById('traj-savings-rate').value) || 20) / 100;
+            const returnRate = (parseFloat(document.getElementById('traj-return-rate').value) || 7) / 100;
+            const inflationRate = (parseFloat(document.getElementById('traj-inflation').value) || 2) / 100;
+            const compoundFreq = parseInt(document.getElementById('traj-compound-freq').value) || 12;
+            const debtChecked = document.getElementById('traj-debt-check').checked;
+            const startingDebt = debtChecked ? (parseFloat(document.getElementById('traj-debt').value) || 0) : 0;
+
+            // Tax calculation
+            const tax = calculate2025Tax(gross);
+            const netSalary = tax.net;
+            document.getElementById('traj-net-salary').value = Math.round(netSalary);
+
+            // Update tax breakdown display
+            const fmt = n => '$' + Math.round(n).toLocaleString();
+            document.getElementById('tax-federal').innerText = fmt(tax.federalTax);
+            document.getElementById('tax-provincial').innerText = fmt(tax.provincialTax);
+            document.getElementById('tax-cpp-ei').innerText = fmt(tax.cppEi);
+            document.getElementById('tax-effective').innerText = tax.effectiveRate.toFixed(1) + '%';
+
+            // Core calculation — salary grows with inflation each year
+            const baseNetSalary = netSalary;
+            const periodicRate = returnRate / compoundFreq;
+            const investmentYears = retirementAge - age;
+
+            // Simulate year by year for chart data
+            const labels = [];
+            const netWorthData = [];
+            const contributionsData = [];
+            const returnsData = [];
+            const salaryData = [];
+            const yearlyBreakdown = []; // for the ledger table
+
+            let balance = -startingDebt; // negative if debt
+            let totalContributed = 0;
+            let yearsToTarget = null;
+            const maxYears = Math.max(investmentYears, 60);
+            let currentNetSalary = baseNetSalary;
+            const startCalendarYear = new Date().getFullYear();
+
+            for (let year = 0; year <= maxYears; year++) {
+                const currentAge = age + year;
+                labels.push(year === 0 ? `${currentAge}` : `${currentAge}`);
+
+                // Grow salary with inflation each year (after year 0)
+                if (year > 0) {
+                    currentNetSalary = baseNetSalary * Math.pow(1 + inflationRate, year);
+                }
+                const annualSavingsThisYear = currentNetSalary * savingsRate;
+                const periodicSavingsThisYear = annualSavingsThisYear / compoundFreq;
+
+                // Track gross salary (pre-tax) for chart display
+                const currentGrossSalary = gross * Math.pow(1 + inflationRate, year);
+                salaryData.push(Math.round(currentGrossSalary));
+
+                const balanceBefore = balance;
+                let yearGains = 0;
+
+                if (year > 0) {
+                    // Compound within this year
+                    for (let p = 0; p < compoundFreq; p++) {
+                        if (balance > 0) {
+                            const growth = balance * periodicRate;
+                            yearGains += growth;
+                            balance = balance + growth + periodicSavingsThisYear;
+                        } else {
+                            // Still in debt payoff mode — contributions reduce debt first
+                            balance += periodicSavingsThisYear;
+                            if (balance > 0) {
+                                const growth = balance * periodicRate;
+                                yearGains += growth;
+                                balance += growth;
+                            }
+                        }
+                    }
+                    totalContributed += annualSavingsThisYear;
+                }
+
+                const investmentGrowth = Math.max(0, balance - totalContributed + startingDebt);
+
+                // Track per-year data for the ledger
+                yearlyBreakdown.push({
+                    calendarYear: startCalendarYear + year,
+                    age: currentAge,
+                    monthlyContrib: annualSavingsThisYear / 12,
+                    annualContrib: year === 0 ? 0 : annualSavingsThisYear,
+                    yearGains: yearGains,
+                    debtRemaining: balance < 0 ? Math.abs(balance) : 0,
+                    isPayingDebt: balance < 0,
+                    netWorth: Math.max(0, balance),
+                    totalContributed: totalContributed
+                });
+
+                netWorthData.push(Math.max(0, balance));
+                contributionsData.push(Math.max(0, totalContributed - startingDebt));
+                returnsData.push(investmentGrowth);
+
+                if (yearsToTarget === null && balance >= target) {
+                    yearsToTarget = year;
+                }
+
+                // Stop rendering 5 years after target is reached (or at maxYears)
+                if (yearsToTarget !== null && year >= yearsToTarget + 5) break;
+                if (year >= maxYears) break;
+            }
+
+            // If target never reached within sim
+            if (yearsToTarget === null) yearsToTarget = maxYears;
+
+            // Inflation-adjusted target
+            const inflationAdjTarget = target * Math.pow(1 + inflationRate, yearsToTarget);
+
+            // Find years for inflation-adjusted target (salary also grows with inflation here)
+            let adjYears = null;
+            let balCheck = -startingDebt;
+            for (let y = 0; y <= 100; y++) {
+                if (y > 0) {
+                    const adjNetSalary = baseNetSalary * Math.pow(1 + inflationRate, y);
+                    const adjAnnualSave = adjNetSalary * savingsRate;
+                    const adjPeriodicSave = adjAnnualSave / compoundFreq;
+                    for (let p = 0; p < compoundFreq; p++) {
+                        if (balCheck > 0) {
+                            balCheck = balCheck * (1 + periodicRate) + adjPeriodicSave;
+                        } else {
+                            balCheck += adjPeriodicSave;
+                            if (balCheck > 0) balCheck = balCheck * (1 + periodicRate);
+                        }
+                    }
+                }
+                const adjTarget = target * Math.pow(1 + inflationRate, y);
+                if (adjYears === null && balCheck >= adjTarget) {
+                    adjYears = y;
+                    break;
+                }
+            }
+            if (adjYears === null) adjYears = 99;
+
+            // Output card calculations use first-year savings for display clarity
+            const annualSavingsYear1 = baseNetSalary * savingsRate;
+            const totalContributedAtTarget = totalContributed; // actual cumulative with inflation growth
+            const totalReturnsAtTarget = Math.max(0, (yearsToTarget < maxYears ? target : balance) - totalContributedAtTarget + startingDebt);
+            const displayTarget = yearsToTarget < maxYears ? target : balance;
+            const returnsPct = displayTarget > 0 ? ((totalReturnsAtTarget / displayTarget) * 100).toFixed(0) : 0;
+            const monthlySave = annualSavingsYear1 / 12;
+
+            // Update output cards
+            document.getElementById('traj-out-years').innerText = investmentYears;
+            document.getElementById('traj-out-age-at-target').innerText = `Retire at age ${retirementAge}`;
+            document.getElementById('traj-out-contributed').innerText = '$' + Math.round(totalContributedAtTarget).toLocaleString();
+            document.getElementById('traj-out-monthly-save').innerText = '$' + Math.round(monthlySave).toLocaleString() + '/mo (yr 1)';
+            document.getElementById('traj-out-returns').innerText = '$' + Math.round(totalReturnsAtTarget).toLocaleString();
+            document.getElementById('traj-out-returns-pct').innerText = returnsPct + '% of target from growth';
+            document.getElementById('traj-out-adj-target').innerText = '$' + Math.round(inflationAdjTarget).toLocaleString();
+            document.getElementById('traj-out-adj-years').innerText = adjYears < 99 ? `${adjYears} years (inflation-adj)` : 'Very long horizon';
+
+            // Update ETF risk profile
+            const horizon = retirementAge - age;
+            document.getElementById('etfHorizonYears').innerText = horizon + '+';
+            const badge = document.getElementById('etfRiskBadge');
+            const riskText = document.getElementById('etfRiskText');
+            if (horizon >= 25) {
+                riskText.innerText = `${horizon}-year horizon → High growth capacity. All-equity recommended.`;
+                badge.style.background = 'rgba(34,197,94,0.1)';
+                badge.style.borderColor = 'rgba(34,197,94,0.3)';
+                badge.style.color = '#86efac';
+            } else if (horizon >= 15) {
+                riskText.innerText = `${horizon}-year horizon → Moderate-high growth. Equity-heavy suitable.`;
+                badge.style.background = 'rgba(59,130,246,0.1)';
+                badge.style.borderColor = 'rgba(59,130,246,0.3)';
+                badge.style.color = '#93c5fd';
+            } else {
+                riskText.innerText = `${horizon}-year horizon → Shorter timeline. Consider balanced allocation.`;
+                badge.style.background = 'rgba(245,158,11,0.1)';
+                badge.style.borderColor = 'rgba(245,158,11,0.3)';
+                badge.style.color = '#fcd34d';
+            }
+
+            // Render chart
+            renderTrajectoryChart(labels, netWorthData, contributionsData, returnsData, salaryData, target);
+
+            // Render year-by-year investment ledger
+            renderInvestmentLedger(yearlyBreakdown, debtChecked);
+        }
+
+        function toggleInvestmentLedger() {
+            const panel = document.getElementById('investmentLedger');
+            const arrow = document.getElementById('inv-ledger-arrow');
+            if (panel.classList.contains('hidden')) {
+                panel.classList.remove('hidden');
+                arrow.style.transform = 'rotate(90deg)';
+            } else {
+                panel.classList.add('hidden');
+                arrow.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        function renderInvestmentLedger(data, hasDebt) {
+            const body = document.getElementById('investmentLedgerBody');
+            const gainsHeader = document.getElementById('ledger-gains-header');
+
+            if (hasDebt) {
+                gainsHeader.innerText = 'Debt Paydown / Gains';
+            } else {
+                gainsHeader.innerText = 'Investment Gains';
+            }
+
+            const fmt = n => '$' + Math.round(n).toLocaleString();
+            let rows = '';
+
+            data.forEach((d, idx) => {
+                if (idx === 0) return; // skip year 0 (no contributions)
+                const isDebtRow = hasDebt && d.isPayingDebt;
+                const rowBg = idx % 2 === 0 ? 'bg-white/[0.02]' : '';
+                const debtPaidThisYear = d.annualContrib; // all contributions go to debt while paying off
+
+                let gainsCell;
+                if (hasDebt && d.debtRemaining > 0) {
+                    gainsCell = `<span class="text-red-400">-${fmt(d.debtRemaining)} remaining</span>`;
+                } else if (hasDebt && idx > 0 && data[idx - 1].debtRemaining > 0 && d.debtRemaining === 0) {
+                    gainsCell = `<span class="text-green-400">✓ Debt cleared!</span>`;
+                } else {
+                    gainsCell = `<span class="text-blue-300">${fmt(d.yearGains)}</span>`;
+                }
+
+                rows += `<tr class="border-b border-purple-900/20 ${rowBg} hover:bg-purple-900/10 transition">
+                    <td class="py-2 px-2 font-mono text-purple-300 font-bold">${d.calendarYear}</td>
+                    <td class="py-2 px-2 text-purple-400">${d.age}</td>
+                    <td class="py-2 px-2 text-right font-mono text-green-300">${fmt(d.monthlyContrib)}/mo</td>
+                    <td class="py-2 px-2 text-right font-mono text-green-400 font-bold">${fmt(d.annualContrib)}</td>
+                    <td class="py-2 px-2 text-right font-mono">${gainsCell}</td>
+                    <td class="py-2 px-2 text-right font-mono font-bold ${d.netWorth > 0 ? 'text-brand-glow' : 'text-red-400'}">${fmt(d.netWorth)}</td>
+                </tr>`;
+            });
+
+            body.innerHTML = rows;
+        }
+
+        function renderTrajectoryChart(labels, netWorth, contributions, returns, salaryData, target) {
+            const ctx = document.getElementById('trajectoryChart').getContext('2d');
+
+            if (trajectoryChart) {
+                trajectoryChart.destroy();
+            }
+
+            trajectoryChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Net Worth',
+                            data: netWorth,
+                            borderColor: '#A855F7',
+                            backgroundColor: 'rgba(168, 85, 247, 0.08)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 0,
+                            pointHoverRadius: 6,
+                            pointHoverBackgroundColor: '#A855F7',
+                            yAxisID: 'y',
+                            order: 1
+                        },
+                        {
+                            label: 'Contributions',
+                            data: contributions,
+                            borderColor: '#22c55e',
+                            borderWidth: 2,
+                            borderDash: [6, 4],
+                            fill: false,
+                            tension: 0.4,
+                            pointRadius: 0,
+                            pointHoverRadius: 5,
+                            pointHoverBackgroundColor: '#22c55e',
+                            yAxisID: 'y',
+                            order: 2
+                        },
+                        {
+                            label: 'Investment Growth',
+                            data: returns,
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.06)',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 0,
+                            pointHoverRadius: 5,
+                            pointHoverBackgroundColor: '#3b82f6',
+                            yAxisID: 'y',
+                            order: 3
+                        },
+                        {
+                            label: 'Annual Salary (Gross)',
+                            data: salaryData,
+                            borderColor: '#f59e0b',
+                            backgroundColor: 'rgba(245, 158, 11, 0.05)',
+                            borderWidth: 2,
+                            borderDash: [3, 3],
+                            fill: false,
+                            tension: 0.3,
+                            pointRadius: 0,
+                            pointHoverRadius: 5,
+                            pointHoverBackgroundColor: '#f59e0b',
+                            yAxisID: 'y2',
+                            order: 4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#a78bfa',
+                                font: { size: 11, weight: 'bold', family: 'Inter' },
+                                usePointStyle: true,
+                                pointStyle: 'circle',
+                                padding: 20
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(15, 5, 24, 0.95)',
+                            borderColor: 'rgba(139, 92, 246, 0.5)',
+                            borderWidth: 1,
+                            titleColor: '#A855F7',
+                            titleFont: { weight: 'bold', size: 13 },
+                            bodyColor: '#e2e8f0',
+                            bodyFont: { size: 12 },
+                            padding: 14,
+                            cornerRadius: 10,
+                            callbacks: {
+                                label: function(ctx) {
+                                    return ctx.dataset.label + ': $' + Math.round(ctx.parsed.y).toLocaleString();
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: {
+                                color: '#7c3aed',
+                                font: { size: 10, weight: '600' },
+                                maxTicksLimit: 20
+                            },
+                            grid: { color: 'rgba(139, 92, 246, 0.08)' }
+                        },
+                        y: {
+                            position: 'left',
+                            ticks: {
+                                color: '#7c3aed',
+                                font: { size: 10, weight: '600' },
+                                callback: function(value) {
+                                    if (value >= 1000000) return '$' + (value / 1000000).toFixed(1) + 'M';
+                                    if (value >= 1000) return '$' + (value / 1000).toFixed(0) + 'K';
+                                    return '$' + value;
+                                }
+                            },
+                            grid: { color: 'rgba(139, 92, 246, 0.08)' }
+                        },
+                        y2: {
+                            position: 'right',
+                            title: {
+                                display: true,
+                                text: 'Annual Salary',
+                                color: '#f59e0b',
+                                font: { size: 10, weight: 'bold' }
+                            },
+                            ticks: {
+                                color: '#f59e0b',
+                                font: { size: 10, weight: '600' },
+                                callback: function(value) {
+                                    if (value >= 1000000) return '$' + (value / 1000000).toFixed(1) + 'M';
+                                    if (value >= 1000) return '$' + (value / 1000).toFixed(0) + 'K';
+                                    return '$' + value;
+                                }
+                            },
+                            grid: { drawOnChartArea: false }
+                        }
+                    },
+                    animation: {
+                        duration: 800,
+                        easing: 'easeOutQuart'
+                    }
+                },
+                plugins: [{
+                    // Custom milestone lines plugin
+                    id: 'milestoneLines',
+                    afterDraw(chart) {
+                        const yAxis = chart.scales.y;
+                        const ctx = chart.ctx;
+                        const area = chart.chartArea;
+                        const milestoneValues = [100000, 500000, 1000000];
+
+                        milestoneValues.forEach(val => {
+                            if (val < yAxis.min || val > yAxis.max) return;
+                            const y = yAxis.getPixelForValue(val);
+
+                            ctx.save();
+                            ctx.beginPath();
+                            ctx.setLineDash([4, 6]);
+                            ctx.strokeStyle = 'rgba(168, 85, 247, 0.25)';
+                            ctx.lineWidth = 1;
+                            ctx.moveTo(area.left, y);
+                            ctx.lineTo(area.right, y);
+                            ctx.stroke();
+
+                            // Label
+                            ctx.fillStyle = 'rgba(168, 85, 247, 0.5)';
+                            ctx.font = 'bold 9px Inter';
+                            const labelText = val >= 1000000 ? '$' + (val/1000000) + 'M' : '$' + (val/1000) + 'K';
+                            ctx.fillText(labelText, area.right + 4, y + 3);
+                            ctx.restore();
+                        });
+                    }
+                }]
+            });
+        }
+
+        // ===== DEBT IMPORT TOGGLE =====
+        function toggleDebtImport() {
+            const checked = document.getElementById('traj-debt-check').checked;
+            const field = document.getElementById('traj-debt-field');
+            field.style.display = checked ? 'block' : 'none';
+
+            if (checked && lastSimulationData) {
+                document.getElementById('traj-debt').value = Math.round(Math.max(0, lastSimulationData.net_burn_rate));
+            }
+            recalcTrajectory();
+        }
+
+        // ===== TRAJECTORY ONBOARDING =====
+        window._estimatedSalary = null;
+
+        async function estimateJobSalary() {
+            const jobTitle = document.getElementById('trajJobTitle').value.trim();
+            if (!jobTitle) {
+                document.getElementById('trajJobTitle').style.borderColor = '#ef4444';
+                document.getElementById('trajJobTitle').placeholder = 'Please enter a job title first...';
+                setTimeout(() => {
+                    document.getElementById('trajJobTitle').style.borderColor = '';
+                    document.getElementById('trajJobTitle').placeholder = 'e.g. Software Developer, Financial Analyst, Marketing Manager...';
+                }, 2000);
+                return;
+            }
+
+            const degreeEl = document.getElementById('degree');
+            const degree = degreeEl ? (degreeEl.options[degreeEl.selectedIndex]?.text || degreeEl.value) : 'General';
+
+            // Show loading, hide button
+            document.getElementById('trajEstimateBtn').style.display = 'none';
+            document.getElementById('trajEstimateLoading').style.display = 'block';
+            document.getElementById('trajSalaryResult').style.display = 'none';
+
+            try {
+                const response = await fetch('/api/estimate-salary', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ program: degree, job_title: jobTitle })
+                });
+                const data = await response.json();
+
+                window._estimatedSalary = data.median_starting_salary || 45000;
+
+                // Animate the salary number
+                const amountEl = document.getElementById('trajSalaryAmount');
+                animateCounter(amountEl, 0, window._estimatedSalary, 1200);
+
+                // Show job title and confidence
+                document.getElementById('trajSalaryJobTitle').innerText = `${jobTitle} • ${degree}`;
+                const conf = data.confidence || 'medium';
+                const confColor = conf === 'high' ? '#22c55e' : conf === 'medium' ? '#f59e0b' : '#ef4444';
+                const confBadge = document.getElementById('trajSalaryConfBadge');
+                confBadge.style.background = conf === 'high' ? 'rgba(34,197,94,0.1)' : conf === 'medium' ? 'rgba(245,158,11,0.1)' : 'rgba(239,68,68,0.1)';
+                confBadge.style.borderColor = conf === 'high' ? 'rgba(34,197,94,0.3)' : conf === 'medium' ? 'rgba(245,158,11,0.3)' : 'rgba(239,68,68,0.3)';
+                confBadge.style.color = confColor;
+                document.getElementById('trajSalaryConfText').innerText = `AI Confidence: ${conf}` + (data.note ? ' — ' + data.note : '');
+
+                document.getElementById('trajSalaryResult').style.display = 'block';
+            } catch (e) {
+                console.error('Salary estimation error:', e);
+                window._estimatedSalary = 45000;
+                document.getElementById('trajSalaryAmount').innerText = '$45,000';
+                document.getElementById('trajSalaryJobTitle').innerText = `${jobTitle} (fallback estimate)`;
+                document.getElementById('trajSalaryConfText').innerText = 'AI Confidence: low — estimate failed, using default';
+                document.getElementById('trajSalaryResult').style.display = 'block';
+            } finally {
+                document.getElementById('trajEstimateLoading').style.display = 'none';
+                document.getElementById('trajEstimateBtn').style.display = 'none';
+            }
+        }
+
+        function animateCounter(el, from, to, duration) {
+            const start = performance.now();
+            function step(now) {
+                const elapsed = now - start;
+                const progress = Math.min(elapsed / duration, 1);
+                // Ease out cubic
+                const eased = 1 - Math.pow(1 - progress, 3);
+                const current = Math.round(from + (to - from) * eased);
+                el.innerText = '$' + current.toLocaleString();
+                if (progress < 1) requestAnimationFrame(step);
+            }
+            requestAnimationFrame(step);
+        }
+
+        function revealTrajectoryCalculator() {
+            // Hide onboarding, show main content
+            document.getElementById('trajOnboarding').style.display = 'none';
+            document.getElementById('trajMainContent').style.display = 'block';
+
+            // Fill salary into the calculator
+            if (window._estimatedSalary) {
+                document.getElementById('traj-gross-salary').value = window._estimatedSalary;
+            }
+
+            // Show confidence in the calculator too
+            const conf = document.getElementById('salaryConfidence');
+            if (conf) {
+                const jobTitle = document.getElementById('trajJobTitle').value.trim();
+                conf.style.display = 'block';
+                conf.innerHTML = `<span style="color:#22c55e">●</span> AI-estimated for: ${jobTitle}`;
+            }
+
+            recalcTrajectory();
+        }
+
+        // ===== AI UPLOAD HANDLER =====
+        async function handleAiUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const label = document.getElementById('uploadLabel');
+            label.innerText = '⏳ Parsing...';
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const resp = await fetch('/api/upload', { method: 'POST', body: formData });
+                const data = await resp.json();
+                if (data.error) { alert('AI Error: ' + data.error); return; }
+
+                // Apply parsed data to dashboard fields
+                if (data.tuition_base) { /* tuition is read-only from degree selection */ }
+                if (data.residence_cost) document.getElementById('residence_cost').value = data.residence_cost;
+                if (data.meal_plan_cost) document.getElementById('meal_cost').value = data.meal_plan_cost;
+                updateSimulation();
+            } catch (e) {
+                alert('Upload Error: ' + e.message);
+            } finally {
+                label.innerText = '✨ Gemini Vision Parser';
+            }
         }
 
         window.onload = () => {
