@@ -143,6 +143,14 @@
             <p class="text-purple-300 text-lg md:text-xl max-w-lg mb-12">Calculate your academic runway. Chronological,
                 precision budgeting.</p>
             <button onclick="nextStep()" class="wiz-btn text-xl shadow-lg shadow-purple-900/50">Begin Setup →</button>
+            <div class="mt-6 flex flex-col items-center gap-2">
+                <p class="text-purple-500 text-xs uppercase tracking-widest font-bold">or restore a previous session</p>
+                <input type="file" id="importSaveFile" accept=".json" class="hidden" onchange="handleImportSave(event)">
+                <label for="importSaveFile"
+                    class="cursor-pointer border border-purple-500/50 text-purple-300 hover:bg-purple-500/20 rounded-full px-6 py-3 text-sm font-semibold flex items-center gap-2 transition hover:scale-105">
+                    📂 Import Save File
+                </label>
+            </div>
         </div>
 
         <!-- Step 1: Campus & Identity -->
@@ -320,6 +328,10 @@
                     class="cursor-pointer border border-brand-accent text-purple-200 hover:bg-brand-accent/20 rounded px-4 py-2 text-xs font-semibold flex items-center gap-2 transition">
                     ✨ Gemini Vision Parser
                 </label>
+                <button type="button" onclick="exportSettings()"
+                    class="border border-cyan-500/60 text-cyan-300 hover:bg-cyan-500/20 rounded px-4 py-2 text-xs font-semibold flex items-center gap-2 transition">
+                    💾 Export Settings
+                </button>
                 <button type="button" onclick="exportLayout()"
                     class="border border-green-500/60 text-green-300 hover:bg-green-500/20 rounded px-4 py-2 text-xs font-semibold flex items-center gap-2 transition">
                     📄 Export PDF Statement
@@ -561,6 +573,89 @@
     <script>
         let currentStep = 0;
         let lastSimulationData = null;
+
+        // ===== EXPORT / IMPORT SETTINGS =====
+        const SAVE_FIELDS = [
+            'campus', 'residency', 'degree', 'credits', 'living_mode',
+            'residence_cost', 'meal_cost', 'monthly_rent', 'monthly_food',
+            'start_month', 'start_year', 'terms_per_year', 'years',
+            'transport_mode', 'dash_extra_transit', 'dash_car_model',
+            'dash_distance_km', 'dash_manual_gas',
+            'income_amount', 'income_freq'
+        ];
+
+        function exportSettings() {
+            const save = { _version: 1, _timestamp: new Date().toISOString() };
+            SAVE_FIELDS.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) save[id] = el.value;
+            });
+            const jsonStr = JSON.stringify(save, null, 2);
+            const blob = new Blob([jsonStr], { type: 'application/json;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'BudgetHawk_Save_' + new Date().toISOString().slice(0, 10) + '.json';
+            a.style.display = 'none';
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(() => {
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }, 100);
+        }
+
+        function handleImportSave(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                try {
+                    const save = JSON.parse(e.target.result);
+                    applySaveData(save);
+                } catch (err) {
+                    alert('Invalid save file. Please select a valid Budget Hawk .json file.');
+                    console.error('Import Error:', err);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function applySaveData(save) {
+            // First, populate the wizard dropdowns so the dashboard clones will have data
+            const campus = save.campus || 'Waterloo';
+            document.getElementById('wiz-campus').value = campus;
+            populateCockpitDropdowns(campus);
+
+            // Set wizard values so completeWizard() can transfer them
+            if (save.residency) document.getElementById('wiz-residency').value = save.residency;
+            if (save.degree) document.getElementById('wiz-degree').value = save.degree;
+            if (save.credits) document.getElementById('wiz-credits').value = save.credits;
+            if (save.living_mode) document.getElementById('wiz-living').value = save.living_mode;
+            if (save.residence_cost) document.getElementById('wiz-residence-cost').value = save.residence_cost;
+            if (save.meal_cost) document.getElementById('wiz-meal-cost').value = save.meal_cost;
+            if (save.monthly_rent) document.getElementById('wiz-monthly-rent').value = save.monthly_rent;
+            if (save.monthly_food) document.getElementById('wiz-monthly-food').value = save.monthly_food;
+            if (save.start_month) document.getElementById('wiz-start-month').value = save.start_month;
+            if (save.start_year) document.getElementById('wiz-start-year').value = save.start_year;
+            if (save.terms_per_year) document.getElementById('wiz-terms-per-year').value = save.terms_per_year;
+            if (save.years) document.getElementById('wiz-years').value = save.years;
+            if (save.transport_mode) document.getElementById('wiz-transport').value = save.transport_mode;
+            if (save.dash_extra_transit) document.getElementById('wiz-extra-transit').value = save.dash_extra_transit;
+            if (save.dash_car_model) document.getElementById('wiz-car-model').value = save.dash_car_model;
+            if (save.dash_distance_km) document.getElementById('wiz-car-km').value = save.dash_distance_km;
+
+            // Complete wizard which transfers all wizard values to dash and opens dashboard
+            completeWizard();
+
+            // After dashboard is open, apply remaining fields directly
+            setTimeout(() => {
+                if (save.income_amount) document.getElementById('income_amount').value = save.income_amount;
+                if (save.income_freq) document.getElementById('income_freq').value = save.income_freq;
+                if (save.dash_manual_gas) document.getElementById('dash_manual_gas').value = save.dash_manual_gas;
+                updateSimulation();
+            }, 600);
+        }
 
         function exportLayout() {
             if (!lastSimulationData) { alert("Please wait for simulation to finish calculating."); return; }
