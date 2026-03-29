@@ -19,7 +19,6 @@ An AI-powered, single-page financial dashboard built for Wilfrid Laurier Univers
 - **Trajectory Chart** — per-term balance graph showing savings depletion over time
 
 ### 🤖 Gemini AI Copilot
-- **Invoice & Receipt Scanning** — upload PDFs/images to auto-extract financial data via Gemini 2.5 Flash Vision API
 - **AI Salary Estimation** — enter your degree + target job title and get a Gemini-powered median starting salary estimate with confidence rating
 
 ### 📈 Financial Trajectory (Investment Calculator)
