@@ -20,27 +20,19 @@ def handle_upload():
     if file.filename == '':
         return jsonify({"error": "No selected file"}), 400
         
-    # Check API key before sending
     if not os.environ.get("GEMINI_API_KEY"):
          return jsonify({"error": "Gemini API key not configured. Pls update .env file."}), 500
          
     try:
-        # Save temp file
         temp_dir = tempfile.gettempdir()
         temp_path = os.path.join(temp_dir, file.filename)
         file.save(temp_path)
         
-        # Parse it
         parsed_data = parse_invoice_document(temp_path)
-        
-        # Cleanup
-        try:
-            os.remove(temp_path)
-        except:
-            pass
+        try: os.remove(temp_path)
+        except: pass
             
         return jsonify(parsed_data)
-        
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -48,100 +40,149 @@ def handle_upload():
 def calculate():
     data = request.json
     
-    # 1. Parsing Inputs and Safely Handling Empty Strings
-    degree_id = data.get('degree', 'non_business')
-    residency = data.get('residency', 'Domestic')
-    entry_year = data.get('entry_year', 'All Years')
+    # Timeline Variables
+    start_month = int(data.get('start_month', 9))
+    start_year = int(data.get('start_year', 2026))
+    terms_per_year = int(data.get('terms_per_year', 2))
+    years_to_calc = int(data.get('years', 1))
     
+    # Core Identity
+    campus = data.get('campus', 'Waterloo')
+    residency = data.get('residency', 'Ontario')
+    degree_id = data.get('degree', 'Bachelor of Business Administration (BBA)')
+    credit_load = float(data.get('credit_load') or 2.5)
+    
+    # Living Situation
+    living_mode = data.get('living_mode', 'Residence')
+    res_cost = float(data.get('residence_cost') or 0)
+    meal_cost = float(data.get('meal_cost') or 0)
+    monthly_rent = float(data.get('monthly_rent') or 0)
+    monthly_food = float(data.get('monthly_food') or 0)
+    
+    # Transportation
+    transport_mode = data.get('transport_mode', 'Walk')
     car_model = data.get('car_model', 'Ford F-150')
     distance_km = float(data.get('distance_km') or 0)
+    manual_gas_price = data.get('manual_gas_price')
+    if manual_gas_price is not None:
+        manual_gas_price = float(manual_gas_price)
+    extra_transit_weekly = float(data.get('extra_transit_weekly') or 0)
     
+    # Custom Ledger & Capital
     custom_costs_array = data.get('custom_costs', [])
-    total_custom_costs = sum([float(item.get('cost') or 0) for item in custom_costs_array])
-    
-    overrides = data.get('overrides', {})
+    total_custom_costs_per_term = sum([float(item.get('cost') or 0) for item in custom_costs_array])
     capital = float(data.get('starting_capital') or 0)
-    horizon = data.get('horizon', 'year')
-
-    # Baseline Costs
-    base_tuition = data_store.calculate_tuition(degree_id, residency, entry_year)
-    base_incidental = data_store.get_annual_incidental_fees()
-    base_residence = float(data.get('residence_cost') or 0)
-    base_meal = float(data.get('meal_cost') or 0)
-    base_transport = data_store.get_transport_cost(car_model, distance_km)
-
-    # Inflow Baselines
+    
+    # Inflow
     income_val = float(data.get('income_amount') or 0)
     income_freq = data.get('income_freq', 'weekly')
+    if income_freq == 'weekly': income_per_term = income_val * 16 # 4 months * 4 weeks
+    elif income_freq == 'bi-weekly': income_per_term = income_val * 8
+    else: income_per_term = income_val * 4
 
-    # HORIZON MATH SCALING
-    if horizon == 'year':
-        # Living options from Excel natively per-term, so mult by 2
-        base_residence *= 2
-        base_meal *= 2
-        trajectory_steps = 4
-        trajectory_label = 'Year'
-        
-        if income_freq == 'weekly': annual_income = income_val * 32
-        elif income_freq == 'bi-weekly': annual_income = income_val * 16
-        else: annual_income = income_val * 8
-    else: 
-        # Term View: Scale Annuals Down
-        base_tuition /= 2
-        base_incidental /= 2
-        base_transport /= 2
-        # Residence/Meals natively term-based, maintain 1x
-        base_residence *= 1
-        base_meal *= 1
-        trajectory_steps = 8
-        trajectory_label = 'Term'
-        
-        if income_freq == 'weekly': annual_income = income_val * 16
-        elif income_freq == 'bi-weekly': annual_income = income_val * 8
-        else: annual_income = income_val * 4
-        
-    # Apply Manual Overrides
-    annual_tuition = float(overrides['tuition']) if overrides.get('tuition') is not None else base_tuition
-    annual_incidental = float(overrides['incidental']) if overrides.get('incidental') is not None else base_incidental
-    annual_living = float(overrides['living']) if overrides.get('living') is not None else (base_residence + base_meal)
-    annual_transport = float(overrides['transport']) if overrides.get('transport') is not None else base_transport
+    total_terms_to_calc = terms_per_year * years_to_calc
     
-    total_annual_cost = annual_tuition + annual_incidental + annual_living + annual_transport + total_custom_costs
-    net_annual_burn = total_annual_cost - annual_income
+    # Loop state
+    current_month = start_month
+    current_year = start_year
+    terms_calc_this_year = 0
     
+    all_terms = []
     trajectory = []
     current_savings = capital
-    for step in range(1, trajectory_steps + 1):
-        current_savings -= net_annual_burn
-        trajectory.append({
-            'year': f'{trajectory_label} {step}',
-            'cost': total_annual_cost,
-            'income': annual_income,
-            'net_burn': net_annual_burn,
-            'remaining_balance': current_savings
+    gross_total = 0
+    total_income = 0
+    
+    term_labels = {
+        9: "Fall Term (Sep-Dec)",
+        1: "Winter Term (Jan-Apr)",
+        5: "Spring/Summer Term (May-Aug)"
+    }
+    
+    for i in range(total_terms_to_calc):
+        is_first_term_of_year = (i % terms_per_year) == 0
+        term_name = f"{term_labels.get(current_month, 'Academic Term')} {current_year}"
+
+        
+        # 1. Academia
+        tuition = data_store.calculate_tuition(degree_id, campus, residency, credit_load)
+        incidental = data_store.calculate_incidental(campus, credit_load, include_annual=is_first_term_of_year)
+        
+        # 2. Living
+        if living_mode == 'Residence':
+            rent = res_cost
+            food = meal_cost
+        elif living_mode == 'Renting':
+            rent = monthly_rent * 4
+            food = monthly_food * 4
+        else: # Home
+            rent = 0
+            food = monthly_food * 4
+            
+        # 3. Transport
+        if transport_mode == 'Car':
+            gas = data_store.get_transport_cost(car_model, distance_km, manual_gas_price, weeks=12)
+        elif transport_mode == 'Transit':
+            gas = extra_transit_weekly * 12
+        else:
+            gas = 0
+            
+        term_total = tuition + incidental + rent + food + gas + total_custom_costs_per_term
+        
+        # Track Math
+        gross_total += term_total
+        total_income += income_per_term
+        net_term_burn = term_total - income_per_term
+        current_savings -= net_term_burn
+        
+        all_terms.append({
+            'name': term_name,
+            'tuition': float(tuition + incidental),
+            'rent': float(rent),
+            'food': float(food),
+            'gas': float(gas),
+            'total': float(term_total),
+            'net_burn': float(net_term_burn)
         })
         
-    # Stability Score Engine
-    if net_annual_burn <= 0:
-        score = 100 # Generating wealth!
+        trajectory.append({
+            'year': term_name,
+            'remaining_balance': float(current_savings)
+        })
+        
+        # Advance chronological clock
+        current_month += 4
+        if current_month > 12:
+            current_month -= 12
+            current_year += 1
+            
+        terms_calc_this_year += 1
+        # If they only study 2 terms per year, skip the gap term (e.g., Summer)
+        if terms_per_year == 2 and terms_calc_this_year == 2:
+            current_month += 4
+            if current_month > 12:
+                current_month -= 12
+                current_year += 1
+            terms_calc_this_year = 0
+            
+    # Trajectory Health (Score based on ending balance vs starting)
+    net_total_burn = gross_total - total_income
+    
+    if net_total_burn <= 0:
+        score = 100
     else:
-        runway_segments = capital / net_annual_burn
-        target_segments = trajectory_steps  # 4 years or 8 terms
-        score = min(max(int((runway_segments / target_segments) * 100), 0), 100)
+        runway_segments = capital / net_total_burn
+        score = min(max(int(runway_segments * 100), 0), 100)
         
     score_label = 'Critical' if score < 25 else 'Low' if score < 50 else 'Moderate' if score < 75 else 'Strong'
-        
+
     return jsonify({
-        'annual_tuition': annual_tuition,
-        'annual_incidental': annual_incidental,
-        'annual_living': annual_living,
-        'annual_transport': annual_transport,
-        'total_custom_costs': total_custom_costs,
-        'gross_annual_cost': total_annual_cost,
-        'annual_income': annual_income,
-        'net_burn_rate': net_annual_burn,
+        'terms': all_terms,
         'trajectory': trajectory,
+        'gross_cost': float(gross_total),
+        'total_income': float(total_income),
+        'net_burn_rate': float(net_total_burn),
         'stability_score': score,
         'stability_label': score_label,
-        'runway_years': round(capital / net_annual_burn, 1) if net_annual_burn > 0 else 99
+        'runway_years': round(capital / (net_total_burn / years_to_calc), 1) if net_total_burn > 0 else 99
     })

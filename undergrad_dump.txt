@@ -1,0 +1,124 @@
+        campus                                          degree_id      residency credit_amount  fee_cad
+0    Brantford  Bachelor of Business Technology Management (BBTM)    Non-Ontario           0.5  1069.00
+1    Brantford  Bachelor of Business Technology Management (BBTM)    Non-Ontario             1  2138.00
+2    Brantford  Bachelor of Business Technology Management (BBTM)    Non-Ontario           1.5  3207.00
+3    Brantford  Bachelor of Business Technology Management (BBTM)    Non-Ontario             2  4276.00
+4    Brantford  Bachelor of Business Technology Management (BBTM)    Non-Ontario          2.25  4767.00
+5    Brantford  Bachelor of Business Technology Management (BBTM)    Non-Ontario           2.5  4767.00
+6    Brantford  Bachelor of Business Technology Management (BBTM)    Non-Ontario          2.75  5301.50
+7    Brantford  Bachelor of Business Technology Management (BBTM)    Non-Ontario             3  5836.00
+8    Brantford  Bachelor of Business Technology Management (BBTM)    Non-Ontario          3.25  6370.50
+9    Brantford  Bachelor of Business Technology Management (BBTM)    Non-Ontario           3.5  6905.00
+10   Brantford  Bachelor of Business Technology Management (BBTM)    Non-Ontario          3.75  7439.50
+11   Brantford  Bachelor of Business Technology Management (BBTM)    Non-Ontario             4  7974.00
+12   Brantford                          Bachelor of Design (BDes)        Ontario           0.5   708.08
+13   Brantford                          Bachelor of Design (BDes)    Non-Ontario           0.5   781.00
+14        Both                        Bachelor of Education (BEd)        Ontario           0.5   805.12
+15        Both                        Bachelor of Education (BEd)    Non-Ontario           0.5   887.00
+16    Waterloo                        BBA + BMath (Double Degree)        Ontario           0.5  1161.40
+17    Waterloo                        BBA + BMath (Double Degree)        Ontario             1  2322.80
+18    Waterloo                        BBA + BMath (Double Degree)        Ontario           1.5  3484.20
+19    Waterloo                        BBA + BMath (Double Degree)        Ontario             2  4645.60
+20    Waterloo                        BBA + BMath (Double Degree)        Ontario          2.25  5179.00
+21    Waterloo                        BBA + BMath (Double Degree)        Ontario           2.5  5179.00
+22    Waterloo                        BBA + BMath (Double Degree)        Ontario          2.75  5471.76
+23    Waterloo                        BBA + BMath (Double Degree)        Ontario             3  5764.40
+24    Waterloo                        BBA + BMath (Double Degree)        Ontario          3.25  6340.06
+25    Waterloo                        BBA + BMath (Double Degree)        Ontario           3.5  6920.77
+26    Waterloo                        BBA + BMath (Double Degree)        Ontario          3.75  7501.77
+27    Waterloo                        BBA + BMath (Double Degree)        Ontario             4  8081.90
+28    Waterloo                        BBA + BMath (Double Degree)    Non-Ontario           0.5  1235.40
+29    Waterloo                        BBA + BMath (Double Degree)    Non-Ontario             1  2470.80
+30    Waterloo                        BBA + BMath (Double Degree)    Non-Ontario           1.5  3706.20
+31    Waterloo                        BBA + BMath (Double Degree)    Non-Ontario             2  4941.60
+32    Waterloo                        BBA + BMath (Double Degree)    Non-Ontario          2.25  5509.00
+33    Waterloo                        BBA + BMath (Double Degree)    Non-Ontario           2.5  5509.00
+34    Waterloo                        BBA + BMath (Double Degree)    Non-Ontario          2.75  6126.70
+35    Waterloo                        BBA + BMath (Double Degree)    Non-Ontario             3  6744.40
+36    Waterloo                        BBA + BMath (Double Degree)    Non-Ontario          3.25  7362.10
+37    Waterloo                        BBA + BMath (Double Degree)    Non-Ontario           3.5  7979.80
+38    Waterloo                        BBA + BMath (Double Degree)    Non-Ontario          3.75  8597.50
+39    Waterloo                        BBA + BMath (Double Degree)    Non-Ontario             4  9215.20
+40    Waterloo         BBA + BSc Computer Science (Double Degree)        Ontario           0.5  1446.71
+41    Waterloo         BBA + BSc Computer Science (Double Degree)        Ontario           Max  6435.74
+42    Waterloo         BBA + BSc Computer Science (Double Degree)    Non-Ontario           0.5  3152.88
+43    Waterloo         BBA + BSc Computer Science (Double Degree)    Non-Ontario           Max  7094.00
+44    Waterloo                   BBA Double Degree (Laurier + UW)        Ontario           0.5  1161.40
+45    Waterloo                   BBA Double Degree (Laurier + UW)        Ontario             1  2322.80
+46    Waterloo                   BBA Double Degree (Laurier + UW)        Ontario           1.5  3484.20
+47    Waterloo                   BBA Double Degree (Laurier + UW)        Ontario             2  4645.60
+48    Waterloo                   BBA Double Degree (Laurier + UW)        Ontario          2.25  5179.00
+49    Waterloo                   BBA Double Degree (Laurier + UW)        Ontario           2.5  5179.00
+50    Waterloo                   BBA Double Degree (Laurier + UW)        Ontario          2.75  5471.76
+51    Waterloo                   BBA Double Degree (Laurier + UW)        Ontario             3  5764.40
+52    Waterloo                   BBA Double Degree (Laurier + UW)        Ontario          3.25  6340.06
+53    Waterloo                   BBA Double Degree (Laurier + UW)        Ontario           3.5  6920.77
+54    Waterloo                   BBA Double Degree (Laurier + UW)        Ontario          3.75  7501.77
+55    Waterloo                   BBA Double Degree (Laurier + UW)        Ontario             4  8081.90
+56    Waterloo                   BBA Double Degree (Laurier + UW)    Non-Ontario           0.5  1235.40
+57    Waterloo                   BBA Double Degree (Laurier + UW)    Non-Ontario             1  2470.80
+58    Waterloo                   BBA Double Degree (Laurier + UW)    Non-Ontario           1.5  3706.20
+59    Waterloo                   BBA Double Degree (Laurier + UW)    Non-Ontario             2  4941.60
+60    Waterloo                   BBA Double Degree (Laurier + UW)    Non-Ontario          2.25  5509.00
+61    Waterloo                   BBA Double Degree (Laurier + UW)    Non-Ontario           2.5  5509.00
+62    Waterloo                   BBA Double Degree (Laurier + UW)    Non-Ontario          2.75  6126.70
+63    Waterloo                   BBA Double Degree (Laurier + UW)    Non-Ontario             3  6744.40
+64    Waterloo                   BBA Double Degree (Laurier + UW)    Non-Ontario          3.25  7362.10
+65    Waterloo                   BBA Double Degree (Laurier + UW)    Non-Ontario           3.5  7979.80
+66    Waterloo                   BBA Double Degree (Laurier + UW)    Non-Ontario          3.75  8597.50
+67    Waterloo                   BBA Double Degree (Laurier + UW)    Non-Ontario             4  9215.20
+68    Waterloo                BSc Computer Science / Data Science        Ontario           0.5   961.00
+69    Waterloo                BSc Computer Science / Data Science        Ontario             1  1922.00
+70    Waterloo                BSc Computer Science / Data Science        Ontario           1.5  2883.00
+71    Waterloo                BSc Computer Science / Data Science        Ontario             2  3844.00
+72    Waterloo                BSc Computer Science / Data Science        Ontario          2.25  4286.00
+73    Waterloo                BSc Computer Science / Data Science        Ontario           2.5  4286.00
+74    Waterloo                BSc Computer Science / Data Science        Ontario          2.75  4766.50
+75    Waterloo                BSc Computer Science / Data Science        Ontario             3  5247.00
+76    Waterloo                BSc Computer Science / Data Science        Ontario          3.25  5727.50
+77    Waterloo                BSc Computer Science / Data Science        Ontario           3.5  6208.00
+78    Waterloo                BSc Computer Science / Data Science        Ontario          3.75  6688.50
+79    Waterloo                BSc Computer Science / Data Science        Ontario             4  7169.00
+80    Waterloo                BSc Computer Science / Data Science    Non-Ontario           0.5   961.00
+81    Waterloo                BSc Computer Science / Data Science    Non-Ontario             1  1922.00
+82    Waterloo                BSc Computer Science / Data Science    Non-Ontario           1.5  2883.00
+83    Waterloo                BSc Computer Science / Data Science    Non-Ontario             2  3844.00
+84    Waterloo                BSc Computer Science / Data Science    Non-Ontario          2.25  4286.00
+85    Waterloo                BSc Computer Science / Data Science    Non-Ontario           2.5  4286.00
+86    Waterloo                BSc Computer Science / Data Science    Non-Ontario          2.75  4766.50
+87    Waterloo                BSc Computer Science / Data Science    Non-Ontario             3  5247.00
+88    Waterloo                BSc Computer Science / Data Science    Non-Ontario          3.25  5727.50
+89    Waterloo                BSc Computer Science / Data Science    Non-Ontario           3.5  6208.00
+90    Waterloo                BSc Computer Science / Data Science    Non-Ontario          3.75  6688.50
+91    Waterloo                BSc Computer Science / Data Science    Non-Ontario             4  7169.00
+92        Both                              Non-Business Programs        Ontario           0.5   679.36
+93        Both                              Non-Business Programs        Ontario             1  1358.72
+94        Both                              Non-Business Programs        Ontario           1.5  2038.08
+95        Both                              Non-Business Programs        Ontario             2  2717.44
+96        Both                              Non-Business Programs        Ontario          2.25  3029.46
+97        Both                              Non-Business Programs        Ontario           2.5  3029.46
+98        Both                              Non-Business Programs        Ontario          2.75  3200.70
+99        Both                              Non-Business Programs        Ontario             3  3371.88
+100       Both                              Non-Business Programs        Ontario          3.25  3708.62
+101       Both                              Non-Business Programs        Ontario           3.5  4048.30
+102       Both                              Non-Business Programs        Ontario          3.75  4388.16
+103       Both                              Non-Business Programs        Ontario             4  4727.50
+104       Both                              Non-Business Programs    Non-Ontario           0.5   749.00
+105       Both                              Non-Business Programs    Non-Ontario             1  1498.00
+106       Both                              Non-Business Programs    Non-Ontario           1.5  2247.00
+107       Both                              Non-Business Programs    Non-Ontario             2  2996.00
+108       Both                              Non-Business Programs    Non-Ontario          2.25  3340.00
+109       Both                              Non-Business Programs    Non-Ontario           2.5  3340.00
+110       Both                              Non-Business Programs    Non-Ontario          2.75  3714.50
+111       Both                              Non-Business Programs    Non-Ontario             3  4089.00
+112       Both                              Non-Business Programs    Non-Ontario          3.25  4463.50
+113       Both                              Non-Business Programs    Non-Ontario           3.5  4838.00
+114       Both                              Non-Business Programs    Non-Ontario          3.75  5212.50
+115       Both                              Non-Business Programs    Non-Ontario             4  5587.00
+116       Both                              Non-Business Programs  International           0.5  3029.46
+117   Waterloo                   BBA Double Degree (Laurier + UW)  International           0.5  4433.20
+118   Waterloo                                       BA Economics  International           0.5   679.36
+119       Both                        Bachelor of Education (BEd)  International           0.5  3662.00
+120   Waterloo         BBA + BSc Computer Science (Double Degree)  International           0.5  6988.60
+121   Waterloo                        BBA + BMath (Double Degree)  International           0.5  5852.00
+122   Waterloo                BSc Computer Science / Data Science  International           0.5  3759.00
