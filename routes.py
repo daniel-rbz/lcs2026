@@ -2,7 +2,7 @@ import os
 import tempfile
 from flask import Blueprint, jsonify, render_template, request
 from data_store import data_store
-from ai_parser import parse_invoice_document
+from ai_parser import parse_invoice_document, estimate_salary
 
 bp = Blueprint('routes', __name__)
 
@@ -214,3 +214,13 @@ def calculate():
         'stability_label': score_label,
         'runway_years': round(capital / (net_total_burn / years_to_calc), 1) if net_total_burn > 0 else 99
     })
+
+@bp.route('/api/estimate-salary', methods=['POST'])
+def handle_salary_estimate():
+    data = request.json
+    program = data.get('program', 'General Arts')
+    job_title = data.get('job_title', '')
+    
+    result = estimate_salary(program, job_title)
+    return jsonify(result)
+

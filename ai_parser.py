@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # We configure the API from the Environment Variable
-genai.configure(api_key=os.environ.get("GEMINI_API_KEY", ""))
+genai.configure(api_key=os.environ.get("GEMINI_APY_KEY", ""))
 
 def parse_invoice_document(file_path):
     """
@@ -58,3 +58,71 @@ def parse_invoice_document(file_path):
     except Exception as e:
         print(f"Gemini API Error: {e}")
         return {"error": str(e)}
+
+
+def estimate_salary(program_name, job_title=""):
+    """
+    Uses Gemini to estimate the median starting salary (0-1 years experience)
+    for a Canadian university program + target job title. Returns structured JSON.
+    """
+    try:
+        if not os.environ.get("GEMINI_API_KEY"):
+            return {
+                "program": program_name,
+                "job_title": job_title,
+                "median_starting_salary": 45000,
+                "confidence": "low",
+                "note": "No API key configured — using default estimate"
+            }
+
+        model = genai.GenerativeModel('gemini-2.5-flash')
+
+        job_context = f'\nTarget Job Title: "{job_title}"' if job_title else ""
+
+        prompt = f"""
+You are a Canadian job market salary estimator.
+
+Given a university program and optionally a target job title, estimate the MEDIAN starting salary (0-1 years experience) in CAD.
+
+Program: "{program_name}"{job_context}
+
+Rules:
+- Base answers on realistic Canadian entry-level salaries
+- If a job title is provided, prioritize the salary for that specific role
+- If it's a double degree, weigh the higher-paying field more
+- Return ONLY JSON:
+
+{{
+  "program": "{program_name}",
+  "job_title": "{job_title}",
+  "median_starting_salary": number,
+  "confidence": "low | medium | high"
+}}
+"""
+
+        response = model.generate_content(
+            prompt,
+            generation_config=genai.GenerationConfig(
+                response_mime_type="application/json"
+            )
+        )
+        raw_text = response.text.strip()
+
+        if raw_text.startswith("```json"):
+            raw_text = raw_text[7:]
+        if raw_text.startswith("```"):
+            raw_text = raw_text[3:]
+        if raw_text.endswith("```"):
+            raw_text = raw_text[:-3]
+
+        return json.loads(raw_text.strip())
+
+    except Exception as e:
+        print(f"Salary Estimation Error: {e}")
+        return {
+            "program": program_name,
+            "job_title": job_title,
+            "median_starting_salary": 45000,
+            "confidence": "low",
+            "error": str(e)
+        }
