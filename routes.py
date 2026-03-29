@@ -64,8 +64,12 @@ def calculate():
     car_model = data.get('car_model', 'Ford F-150')
     distance_km = float(data.get('distance_km') or 0)
     manual_gas_price = data.get('manual_gas_price')
-    if manual_gas_price is not None:
+    if manual_gas_price is not None and str(manual_gas_price).strip() != '':
         manual_gas_price = float(manual_gas_price)
+        if manual_gas_price <= 0:
+            manual_gas_price = None
+    else:
+        manual_gas_price = None
     extra_transit_weekly = float(data.get('extra_transit_weekly') or 0)
     
     # Custom Ledger & Capital
@@ -106,7 +110,9 @@ def calculate():
         
         # 1. Academia
         tuition = data_store.calculate_tuition(degree_id, campus, residency, credit_load)
-        incidental = data_store.calculate_incidental(campus, credit_load, include_annual=is_first_term_of_year)
+        incidental_result = data_store.calculate_incidental_breakdown(campus, credit_load, include_annual=is_first_term_of_year)
+        incidental = incidental_result['total']
+        incidental_items = incidental_result['items']
         
         # 2. Living
         if living_mode == 'Residence':
@@ -135,14 +141,36 @@ def calculate():
         net_term_burn = term_total - income_per_term
         current_savings -= net_term_burn
         
+        # Build line-item breakdown for this term
+        breakdown = []
+        breakdown.append({'category': 'Tuition', 'name': f'Tuition ({degree_id})', 'amount': float(tuition)})
+        for item in incidental_items:
+            breakdown.append({'category': 'Incidental Fee', 'name': item['name'], 'amount': float(item['amount'])})
+        if rent > 0:
+            if living_mode == 'Residence':
+                breakdown.append({'category': 'Housing', 'name': 'Residence', 'amount': float(rent)})
+            else:
+                breakdown.append({'category': 'Housing', 'name': f'Rent ({4} months)', 'amount': float(rent)})
+        if food > 0:
+            if living_mode == 'Residence':
+                breakdown.append({'category': 'Food', 'name': 'Meal Plan', 'amount': float(food)})
+            else:
+                breakdown.append({'category': 'Food', 'name': f'Food Budget ({4} months)', 'amount': float(food)})
+        if gas > 0:
+            transport_label = 'Car (Fuel)' if transport_mode == 'Car' else 'Public Transit'
+            breakdown.append({'category': 'Transport', 'name': transport_label, 'amount': float(gas)})
+        
         all_terms.append({
             'name': term_name,
             'tuition': float(tuition + incidental),
+            'tuition_only': float(tuition),
+            'incidental_only': float(incidental),
             'rent': float(rent),
             'food': float(food),
             'gas': float(gas),
             'total': float(term_total),
-            'net_burn': float(net_term_burn)
+            'net_burn': float(net_term_burn),
+            'breakdown': breakdown
         })
         
         trajectory.append({

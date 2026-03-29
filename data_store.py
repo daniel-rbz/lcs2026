@@ -108,8 +108,13 @@ class DataStore:
         return 0.0
 
     def calculate_incidental(self, campus, credit_load, include_annual=True):
+        result = self.calculate_incidental_breakdown(campus, credit_load, include_annual)
+        return result['total']
+
+    def calculate_incidental_breakdown(self, campus, credit_load, include_annual=True):
         total_incidental = 0.0
         courses = float(credit_load) / 0.5
+        line_items = []
         
         df_target = self.df_fees[self.df_fees['campus'].isin([campus, 'Both'])]
         
@@ -117,6 +122,7 @@ class DataStore:
             per_course = float(row['per_05_credit']) if not pd.isna(row['per_05_credit']) else 0.0
             max_term = float(row['max_per_term']) if not pd.isna(row['max_per_term']) else 0.0
             freq = str(row['frequency']).strip().lower()
+            fee_name = str(row['fee_name']) if 'fee_name' in row.index else 'Unnamed Fee'
             
             term_cost = per_course * courses
             if max_term > 0 and term_cost > max_term:
@@ -126,11 +132,13 @@ class DataStore:
 
             if freq == 'annual':
                 if include_annual:
-                    total_incidental += term_cost # Charged once per year
+                    total_incidental += term_cost
+                    line_items.append({'name': fee_name, 'amount': term_cost, 'frequency': 'Annual'})
             else:
-                total_incidental += term_cost # Charged every term
+                total_incidental += term_cost
+                line_items.append({'name': fee_name, 'amount': term_cost, 'frequency': 'Per Term'})
 
-        return total_incidental
+        return {'total': total_incidental, 'items': line_items}
 
     def get_transport_cost(self, car_model, distance_km_per_week, manual_gas_price=None, weeks=12):
         if distance_km_per_week <= 0:

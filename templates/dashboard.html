@@ -300,535 +300,634 @@
     <!-- MAIN DASHBOARD CONTENT (Hidden Initially) -->
     <div id="mainApp" class="transition-all duration-1000 opacity-0 hidden">
 
-            <!-- Top Navigation Bar -->
-            <nav
-                class="flex justify-between items-center bg-brand-dark/90 border-b border-purple-800/80 p-4 sticky top-0 z-40 backdrop-blur-xl mb-6 shadow-lg shadow-purple-900/20">
-                <div class="flex items-center gap-4 pl-4">
-                    <div>
-                        <div class="text-3xl font-extrabold text-brand-glow glow-text tracking-tight leading-none">
-                            Budget
-                            Hawk</div>
-                        <div class="text-[10px] text-purple-400 font-mono tracking-widest uppercase mt-1">Chronological
-                            View
-                        </div>
+        <!-- Top Navigation Bar -->
+        <nav
+            class="flex justify-between items-center bg-brand-dark/90 border-b border-purple-800/80 p-4 sticky top-0 z-40 backdrop-blur-xl mb-6 shadow-lg shadow-purple-900/20">
+            <div class="flex items-center gap-4 pl-4">
+                <div>
+                    <div class="text-3xl font-extrabold text-brand-glow glow-text tracking-tight leading-none">
+                        Budget
+                        Hawk</div>
+                    <div class="text-[10px] text-purple-400 font-mono tracking-widest uppercase mt-1">Chronological
+                        View
                     </div>
                 </div>
-                <div class="flex items-center gap-4 pr-4">
-                    <input type="file" id="invoiceUpload" accept="image/*,application/pdf" class="hidden"
-                        onchange="handleAiUpload(event)">
-                    <label for="invoiceUpload" id="uploadLabel"
-                        class="cursor-pointer border border-brand-accent text-purple-200 hover:bg-brand-accent/20 rounded px-4 py-2 text-xs font-semibold flex items-center gap-2 transition">
-                        ✨ Gemini Vision Parser
-                    </label>
-                </div>
-            </nav>
-
-            <div class="max-w-7xl mx-auto px-6 h-full flex flex-col lg:flex-row gap-6">
-
-                <!-- Global Variable Controller Panel -->
-                <div class="cockpit-panel p-6 w-full lg:w-1/3 flex flex-col space-y-4 max-h-[85vh] overflow-y-auto">
-                    <h3
-                        class="text-brand-glow font-bold mb-2 uppercase tracking-wide border-b border-brand-accent/30 pb-2">
-                        Global Settings</h3>
-
-                    <div class="grid grid-cols-2 gap-2 mt-2">
-                        <div>
-                            <label class="block text-[10px] uppercase text-purple-300 mb-1">Campus</label>
-                            <select id="campus" class="w-full rounded bg-brand-dark p-2 text-xs std-input">
-                                <option value="Waterloo">Waterloo</option>
-                                <option value="Brantford">Brantford</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-[10px] uppercase text-purple-300 mb-1">Residency</label>
-                            <select id="residency" class="w-full rounded bg-brand-dark p-2 text-xs std-input">
-                                <option value="Ontario">ON</option>
-                                <option value="Non-Ontario">Non-ON</option>
-                                <option value="International">Intl</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="block text-[10px] uppercase text-purple-300 mb-1">Degree</label>
-                        <select id="degree" class="w-full rounded bg-brand-dark p-2 text-xs std-input"></select>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-2">
-                        <div>
-                            <label class="block text-[10px] uppercase text-purple-300 mb-1">Credits/Term</label>
-                            <input type="number" step="0.25" id="credits"
-                                class="w-full rounded bg-brand-dark p-2 text-xs std-input">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] uppercase text-purple-300 mb-1">Living</label>
-                            <select id="living_mode" class="w-full rounded bg-brand-dark p-2 text-xs std-input"
-                                onchange="toggleDashLiving()">
-                                <option value="Residence">Res</option>
-                                <option value="Renting">Rent</option>
-                                <option value="Home">Home</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Living Conditional block -->
-                    <div id="dash-res-div" class="space-y-2 border border-purple-800/50 p-2 rounded bg-brand-dark/50">
-                        <select id="residence_cost"
-                            class="w-full rounded bg-brand-dark p-2 text-[10px] std-input"></select>
-                        <select id="meal_cost" class="w-full rounded bg-brand-dark p-2 text-[10px] std-input"></select>
-                    </div>
-                    <div id="dash-rent-div"
-                        class="hidden space-y-2 border border-purple-800/50 p-2 rounded bg-brand-dark/50">
-                        <div class="flex gap-2 text-xs">
-                            <input type="number" id="monthly_rent" class="w-1/2 rounded bg-brand-dark p-2 std-input"
-                                placeholder="Rent/mo">
-                            <input type="number" id="monthly_food" class="w-1/2 rounded bg-brand-dark p-2 std-input"
-                                placeholder="Food/mo">
-                        </div>
-                    </div>
-
-                    <!-- Timeline Conditional block -->
-                    <div class="border border-purple-800/50 p-2 rounded bg-brand-dark/50 grid grid-cols-2 gap-2">
-                        <div>
-                            <label class="block text-[9px] uppercase text-purple-400">Start M/Y</label>
-                            <div class="flex text-xs">
-                                <select id="start_month" class="w-1/2 rounded-l bg-brand-dark p-1 std-input border-r-0">
-                                    <option value="9">Sep</option>
-                                    <option value="1">Jan</option>
-                                    <option value="5">May</option>
-                                </select>
-                                <select id="start_year" class="w-1/2 rounded-r bg-brand-dark p-1 std-input">
-                                    <option value="2024">2024</option>
-                                    <option value="2025">2025</option>
-                                    <option value="2026">2026</option>
-                                    <option value="2027">2027</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-[9px] uppercase text-purple-400">Gen Terms</label>
-                            <div class="flex text-xs">
-                                <select id="terms_per_year"
-                                    class="w-1/2 rounded-l bg-brand-dark p-1 std-input border-r-0">
-                                    <option value="2">2/yr</option>
-                                    <option value="3">3/yr</option>
-                                </select>
-                                <select id="years" class="w-1/2 rounded-r bg-brand-dark p-1 std-input">
-                                    <option value="1">1yr</option>
-                                    <option value="2">2yr</option>
-                                    <option value="3">3yr</option>
-                                    <option value="4">4yr</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Transport -->
-                    <div class="space-y-2 border border-purple-800/50 p-2 rounded bg-brand-dark/50">
-                        <label class="block text-[10px] uppercase text-purple-300 font-bold">Transport System</label>
-                        <select id="transport_mode" class="w-full rounded bg-brand-dark p-2 text-xs std-input"
-                            onchange="toggleDashTransport()">
-                            <option value="Walk">Walking</option>
-                            <option value="Transit">Transit</option>
-                            <option value="Car">Car</option>
-                        </select>
-
-                        <input type="hidden" id="dash_extra_transit" value="0">
-                        <input type="hidden" id="dash_car_model" value="">
-                        <input type="hidden" id="dash_distance_km" value="0">
-                        <input type="hidden" id="dash_manual_gas" value="0">
-
-                        <div id="dash-trans-opts" class="hidden text-xs space-y-2 mt-2">
-                            <!-- Filled by JS -->
-                        </div>
-                    </div>
-
-                    <!-- Income -->
-                    <div class="border border-green-900/50 p-2 rounded bg-green-900/10">
-                        <label class="block text-[10px] uppercase text-green-400 font-bold mb-1">Job Income Engine
-                            ($)</label>
-                        <div class="flex gap-2">
-                            <input type="number" id="income_amount" value="0"
-                                class="std-input w-1/3 rounded p-2 text-xs bg-brand-dark">
-                            <select id="income_freq" class="std-input w-2/3 rounded p-2 text-xs bg-brand-dark">
-                                <option value="weekly">Weekly</option>
-                                <option value="bi-weekly">Bi-weekly</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Dashboard Visuals -->
-                <div class="w-full lg:w-2/3 space-y-6 flex flex-col">
-                    <!-- Data HUD -->
-                    <div class="grid grid-cols-3 gap-4">
-                        <div class="cockpit-panel p-4 text-center border-t-2 border-red-500/50">
-                            <div class="text-[10px] tracking-widest text-red-400 mb-1 uppercase font-bold">Total Gross
-                                Outflow</div>
-                            <div id="cost-gross" class="text-xl font-bold text-red-300">$0.00</div>
-                        </div>
-                        <div class="cockpit-panel p-4 text-center border-t-2 border-green-500/50">
-                            <div class="text-[10px] tracking-widest text-green-400 mb-1 uppercase font-bold">Total Job
-                                Inflow</div>
-                            <div id="cost-income" class="text-xl font-bold text-green-300">+$0.00</div>
-                        </div>
-                        <div class="cockpit-panel p-4 text-center border-t-2 border-brand-accent">
-                            <div class="text-[10px] tracking-widest text-brand-glow mb-1 uppercase font-bold">Net Total
-                                Burn
-                            </div>
-                            <div id="cost-net" class="text-2xl font-black text-brand-glow drop-shadow-lg">$0.00</div>
-                        </div>
-                    </div>
-
-                    <!-- Master Term List -->
-                    <div class="cockpit-panel p-6 flex-1 overflow-y-auto">
-                        <h2 class="text-lg font-bold text-brand-accent mb-4 border-b border-brand-accent/30 pb-2">
-                            Chronological Invoice Ledgers</h2>
-                        <div id="termCardsContainer" class="space-y-4">
-                            <!-- Rendered by JS -->
-                        </div>
-                    </div>
-                </div>
-
             </div>
-        </div> <!-- END MAIN APP -->
+            <div class="flex items-center gap-4 pr-4">
+                <input type="file" id="invoiceUpload" accept="image/*,application/pdf" class="hidden"
+                    onchange="handleAiUpload(event)">
+                <label for="invoiceUpload" id="uploadLabel"
+                    class="cursor-pointer border border-brand-accent text-purple-200 hover:bg-brand-accent/20 rounded px-4 py-2 text-xs font-semibold flex items-center gap-2 transition">
+                    ✨ Gemini Vision Parser
+                </label>
+                <button type="button" onclick="exportLayout()"
+                    class="border border-green-500/60 text-green-300 hover:bg-green-500/20 rounded px-4 py-2 text-xs font-semibold flex items-center gap-2 transition">
+                    📄 Export PDF Statement
+                </button>
+            </div>
+        </nav>
 
-        <!-- Hidden Invoice Template -->
-        <div id="invoiceTemplateContainer" style="display: none; position: absolute; top: -9999px;">
-            <div id="invoiceTemplate"
-                style="background: white; color: black; width: 800px; padding: 40px; font-family: 'Inter', sans-serif;">
-                <div
-                    style="display: flex; justify-content: space-between; border-bottom: 2px solid #8B5CF6; padding-bottom: 20px; margin-bottom: 20px;">
+        <div class="max-w-7xl mx-auto px-6 h-full flex flex-col lg:flex-row gap-6">
+
+            <!-- Global Variable Controller Panel -->
+            <div class="cockpit-panel p-6 w-full lg:w-1/3 flex flex-col space-y-4 max-h-[85vh] overflow-y-auto">
+                <h3 class="text-brand-glow font-bold mb-2 uppercase tracking-wide border-b border-brand-accent/30 pb-2">
+                    Global Settings</h3>
+
+                <div class="grid grid-cols-2 gap-2 mt-2">
                     <div>
-                        <h1 style="color: #A855F7; font-size: 32px; font-weight: 900; margin: 0; letter-spacing: -1px;">
-                            Budget Hawk</h1>
-                        <p
-                            style="color: #666; font-size: 11px; text-transform: uppercase; font-weight: bold; letter-spacing: 2px;">
-                            Chronological Financial Statement</p>
+                        <label class="block text-[10px] uppercase text-purple-300 mb-1">Campus</label>
+                        <select id="campus" class="w-full rounded bg-brand-dark p-2 text-xs std-input">
+                            <option value="Waterloo">Waterloo</option>
+                            <option value="Brantford">Brantford</option>
+                        </select>
                     </div>
-                    <div style="text-align: right; font-size: 12px;">
-                        <p style="margin: 0; font-weight: bold; text-transform: uppercase;">Date Generated:</p>
-                        <p style="margin: 3px 0; color: #444;" id="invDate"></p>
+                    <div>
+                        <label class="block text-[10px] uppercase text-purple-300 mb-1">Residency</label>
+                        <select id="residency" class="w-full rounded bg-brand-dark p-2 text-xs std-input">
+                            <option value="Ontario">ON</option>
+                            <option value="Non-Ontario">Non-ON</option>
+                            <option value="International">Intl</option>
+                        </select>
                     </div>
                 </div>
 
-                <table
-                    style="width: 100%; border-collapse: collapse; margin-bottom: 30px; font-size: 12px; text-align: center;">
-                    <thead>
-                        <tr style="background: #f3f4f6; text-transform: uppercase; font-size: 10px; color: #555;">
-                            <th style="padding: 10px; text-align: left;">Term Name</th>
-                            <th style="padding: 10px;">Tuition/Fees</th>
-                            <th style="padding: 10px;">Rent</th>
-                            <th style="padding: 10px;">Food</th>
-                            <th style="padding: 10px;">Transport</th>
-                            <th style="padding: 10px; text-align: right;">Term Total</th>
-                        </tr>
-                    </thead>
-                    <tbody id="invTableBody"></tbody>
-                </table>
+                <div>
+                    <label class="block text-[10px] uppercase text-purple-300 mb-1">Degree</label>
+                    <select id="degree" class="w-full rounded bg-brand-dark p-2 text-xs std-input"></select>
+                </div>
 
-                <div style="display: flex; justify-content: flex-end;">
-                    <div style="width: 350px;">
-                        <div
-                            style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee; font-size: 14px;">
-                            <span
-                                style="color: #555; text-transform: uppercase; font-size: 12px; font-weight: bold;">Gross
-                                Total Outline:</span><strong id="invGross" style="color: #dc2626;"></strong>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-[10px] uppercase text-purple-300 mb-1">Credits/Term</label>
+                        <input type="number" step="0.25" id="credits"
+                            class="w-full rounded bg-brand-dark p-2 text-xs std-input">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] uppercase text-purple-300 mb-1">Living</label>
+                        <select id="living_mode" class="w-full rounded bg-brand-dark p-2 text-xs std-input"
+                            onchange="toggleDashLiving()">
+                            <option value="Residence">Res</option>
+                            <option value="Renting">Rent</option>
+                            <option value="Home">Home</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Living Conditional block -->
+                <div id="dash-res-div" class="space-y-2 border border-purple-800/50 p-2 rounded bg-brand-dark/50">
+                    <select id="residence_cost" class="w-full rounded bg-brand-dark p-2 text-[10px] std-input"></select>
+                    <select id="meal_cost" class="w-full rounded bg-brand-dark p-2 text-[10px] std-input"></select>
+                </div>
+                <div id="dash-rent-div"
+                    class="hidden space-y-2 border border-purple-800/50 p-2 rounded bg-brand-dark/50">
+                    <div class="flex gap-2 text-xs">
+                        <input type="number" id="monthly_rent" class="w-1/2 rounded bg-brand-dark p-2 std-input"
+                            placeholder="Rent/mo">
+                        <input type="number" id="monthly_food" class="w-1/2 rounded bg-brand-dark p-2 std-input"
+                            placeholder="Food/mo">
+                    </div>
+                </div>
+
+                <!-- Timeline Conditional block -->
+                <div class="border border-purple-800/50 p-2 rounded bg-brand-dark/50 grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-[9px] uppercase text-purple-400">Start M/Y</label>
+                        <div class="flex text-xs">
+                            <select id="start_month" class="w-1/2 rounded-l bg-brand-dark p-1 std-input border-r-0">
+                                <option value="9">Sep</option>
+                                <option value="1">Jan</option>
+                                <option value="5">May</option>
+                            </select>
+                            <select id="start_year" class="w-1/2 rounded-r bg-brand-dark p-1 std-input">
+                                <option value="2024">2024</option>
+                                <option value="2025">2025</option>
+                                <option value="2026">2026</option>
+                                <option value="2027">2027</option>
+                            </select>
                         </div>
-                        <div
-                            style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee; font-size: 14px;">
-                            <span
-                                style="color: #555; text-transform: uppercase; font-size: 12px; font-weight: bold;">Income
-                                Offset:</span><strong id="invIncome" style="color: #059669;"></strong>
-                        </div>
-                        <div
-                            style="display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 2px solid #111; font-size: 20px; font-weight: 900; color: #A855F7;">
-                            <span>NET TOTAL BURN:</span><strong id="invNet"></strong>
+                    </div>
+                    <div>
+                        <label class="block text-[9px] uppercase text-purple-400">Gen Terms</label>
+                        <div class="flex text-xs">
+                            <select id="terms_per_year" class="w-1/2 rounded-l bg-brand-dark p-1 std-input border-r-0">
+                                <option value="2">2/yr</option>
+                                <option value="3">3/yr</option>
+                            </select>
+                            <select id="years" class="w-1/2 rounded-r bg-brand-dark p-1 std-input">
+                                <option value="1">1yr</option>
+                                <option value="2">2yr</option>
+                                <option value="3">3yr</option>
+                                <option value="4">4yr</option>
+                            </select>
                         </div>
                     </div>
                 </div>
-                <p style="text-align: center; color: #999; font-size: 10px; margin-top: 60px; font-style: italic;">
-                    Powered
-                    by Budget Hawk Financial OS</p>
+
+                <!-- Transport -->
+                <div class="space-y-2 border border-purple-800/50 p-2 rounded bg-brand-dark/50">
+                    <label class="block text-[10px] uppercase text-purple-300 font-bold">Transport System</label>
+                    <select id="transport_mode" class="w-full rounded bg-brand-dark p-2 text-xs std-input"
+                        onchange="toggleDashTransport()">
+                        <option value="Walk">Walking</option>
+                        <option value="Transit">Transit</option>
+                        <option value="Car">Car</option>
+                    </select>
+
+                    <input type="hidden" id="dash_extra_transit" value="0">
+                    <input type="hidden" id="dash_car_model" value="">
+                    <input type="hidden" id="dash_distance_km" value="0">
+                    <input type="hidden" id="dash_manual_gas" value="0">
+
+                    <div id="dash-trans-opts" class="hidden text-xs space-y-2 mt-2">
+                        <!-- Filled by JS -->
+                    </div>
+                </div>
+
+                <!-- Income -->
+                <div class="border border-green-900/50 p-2 rounded bg-green-900/10">
+                    <label class="block text-[10px] uppercase text-green-400 font-bold mb-1">Job Income Engine
+                        ($)</label>
+                    <div class="flex gap-2">
+                        <input type="number" id="income_amount" value="0"
+                            class="std-input w-1/3 rounded p-2 text-xs bg-brand-dark">
+                        <select id="income_freq" class="std-input w-2/3 rounded p-2 text-xs bg-brand-dark">
+                            <option value="weekly">Weekly</option>
+                            <option value="bi-weekly">Bi-weekly</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Visuals -->
+            <div class="w-full lg:w-2/3 space-y-6 flex flex-col">
+                <!-- Data HUD -->
+                <div class="grid grid-cols-3 gap-4">
+                    <div class="cockpit-panel p-4 text-center border-t-2 border-red-500/50">
+                        <div class="text-[10px] tracking-widest text-red-400 mb-1 uppercase font-bold">Total Gross
+                            Outflow</div>
+                        <div id="cost-gross" class="text-xl font-bold text-red-300">$0.00</div>
+                    </div>
+                    <div class="cockpit-panel p-4 text-center border-t-2 border-green-500/50">
+                        <div class="text-[10px] tracking-widest text-green-400 mb-1 uppercase font-bold">Total Job
+                            Inflow</div>
+                        <div id="cost-income" class="text-xl font-bold text-green-300">+$0.00</div>
+                    </div>
+                    <div class="cockpit-panel p-4 text-center border-t-2 border-brand-accent">
+                        <div class="text-[10px] tracking-widest text-brand-glow mb-1 uppercase font-bold">Net Total
+                            Burn
+                        </div>
+                        <div id="cost-net" class="text-2xl font-black text-brand-glow drop-shadow-lg">$0.00</div>
+                    </div>
+                </div>
+
+                <!-- Master Term List -->
+                <div class="cockpit-panel p-6 flex-1 overflow-y-auto">
+                    <h2 class="text-lg font-bold text-brand-accent mb-4 border-b border-brand-accent/30 pb-2">
+                        Chronological Invoice Ledgers</h2>
+                    <div id="termCardsContainer" class="space-y-4">
+                        <!-- Rendered by JS -->
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div> <!-- END MAIN APP -->
+
+    <!-- Hidden Invoice Template -->
+    <div id="invoiceTemplateContainer" style="display: none; position: absolute; top: -9999px;">
+        <div id="invoiceTemplate"
+            style="background: white; color: #111; width: 800px; padding: 50px 40px; font-family: 'Inter', sans-serif; line-height: 1.5;">
+            <!-- Header -->
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px;">
+                <div>
+                    <h1 style="color: #7C3AED; font-size: 36px; font-weight: 900; margin: 0; letter-spacing: -1.5px;">
+                        Budget Hawk</h1>
+                    <p
+                        style="color: #888; font-size: 10px; text-transform: uppercase; font-weight: 700; letter-spacing: 3px; margin: 4px 0 0;">
+                        Student Financial Statement</p>
+                </div>
+                <div style="text-align: right; font-size: 11px; color: #555;">
+                    <p
+                        style="margin: 0; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #7C3AED;">
+                        Statement Date</p>
+                    <p style="margin: 2px 0 12px; font-size: 13px;" id="invDate"></p>
+                    <p id="invStudentInfo" style="margin: 0; color: #777; font-size: 10px;"></p>
+                </div>
+            </div>
+            <div
+                style="height: 3px; background: linear-gradient(90deg, #7C3AED, #6366f1, #a78bfa); border-radius: 2px; margin-bottom: 30px;">
+            </div>
+
+            <!-- Summary HUD -->
+            <div style="display: flex; gap: 12px; margin-bottom: 30px;">
+                <div
+                    style="flex: 1; background: #fef2f2; border: 1px solid #fca5a5; border-radius: 8px; padding: 14px; text-align: center;">
+                    <p
+                        style="margin: 0; font-size: 9px; text-transform: uppercase; font-weight: 800; color: #b91c1c; letter-spacing: 1px;">
+                        Total Expenses</p>
+                    <p id="invGross" style="margin: 4px 0 0; font-size: 20px; font-weight: 900; color: #dc2626;"></p>
+                </div>
+                <div
+                    style="flex: 1; background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; padding: 14px; text-align: center;">
+                    <p
+                        style="margin: 0; font-size: 9px; text-transform: uppercase; font-weight: 800; color: #15803d; letter-spacing: 1px;">
+                        Projected Income</p>
+                    <p id="invIncome" style="margin: 4px 0 0; font-size: 20px; font-weight: 900; color: #059669;"></p>
+                </div>
+                <div
+                    style="flex: 1; background: #f5f3ff; border: 1px solid #c4b5fd; border-radius: 8px; padding: 14px; text-align: center;">
+                    <p
+                        style="margin: 0; font-size: 9px; text-transform: uppercase; font-weight: 800; color: #6d28d9; letter-spacing: 1px;">
+                        Net Total</p>
+                    <p id="invNet" style="margin: 4px 0 0; font-size: 20px; font-weight: 900; color: #7C3AED;"></p>
+                </div>
+            </div>
+
+            <!-- Per-term breakdown tables injected here -->
+            <div id="invTermBreakdowns"></div>
+
+            <!-- Footer -->
+            <div style="margin-top: 40px; padding-top: 16px; border-top: 2px solid #e5e7eb;">
+                <p style="text-align: center; color: #aaa; font-size: 9px; font-style: italic; margin: 0;">This document
+                    is an estimate generated by Budget Hawk Financial OS. Actual fees may vary.</p>
             </div>
         </div>
+    </div>
 
 
-        <!-- Hidden Storage for specific dash transport vals -->
-        <input type="hidden" id="dash_extra_transit" value="0">
-        <input type="hidden" id="dash_car_model" value="Ford Escape">
-        <input type="hidden" id="dash_distance_km" value="50">
-        <input type="hidden" id="dash_manual_gas" value="">
-        <input type="hidden" id="dash_hist_gas" value="1.50">
 
-        <!-- JS Logic -->
-        <script>
-            let currentStep = 0;
-            let lastSimulationData = null;
+    <!-- JS Logic -->
+    <script>
+        let currentStep = 0;
+        let lastSimulationData = null;
 
-            function exportLayout() {
-                if (!lastSimulationData) { alert("Please wait for simulation to finish calculating."); return; }
-                document.getElementById('invDate').innerText = new Date().toLocaleDateString();
+        function exportLayout() {
+            if (!lastSimulationData) { alert("Please wait for simulation to finish calculating."); return; }
 
-                const tbody = document.getElementById('invTableBody');
-                tbody.innerHTML = '';
-                lastSimulationData.terms.forEach(t => {
-                    tbody.innerHTML += `
-                <tr style="border-bottom: 1px solid #f3f4f6;">
-                    <td style="padding: 10px; font-weight: bold; text-align: left; color: #8B5CF6;">${t.name}</td>
-                    <td style="padding: 10px;">$${t.tuition.toFixed(2)}</td>
-                    <td style="padding: 10px;">$${t.rent.toFixed(2)}</td>
-                    <td style="padding: 10px;">$${t.food.toFixed(2)}</td>
-                    <td style="padding: 10px;">$${t.gas.toFixed(2)}</td>
-                    <td style="padding: 10px; text-align: right; font-weight: bold;">$${t.total.toFixed(2)}</td>
-                </tr>`;
-                });
+            const now = new Date();
+            document.getElementById('invDate').innerText = now.toLocaleDateString('en-CA', { year: 'numeric', month: 'long', day: 'numeric' });
 
-                document.getElementById('invGross').innerText = '$' + lastSimulationData.gross_cost.toLocaleString();
-                document.getElementById('invIncome').innerText = '+$' + lastSimulationData.total_income.toLocaleString();
-                document.getElementById('invNet').innerText = '$' + lastSimulationData.net_burn_rate.toLocaleString();
+            // Student context
+            const campus = document.getElementById('campus').value;
+            const residency = document.getElementById('residency').value;
+            const degree = document.getElementById('degree').value;
+            document.getElementById('invStudentInfo').innerText = `${campus} Campus · ${residency} · ${degree}`;
 
-                const container = document.getElementById('invoiceTemplateContainer');
-                const target = document.getElementById('invoiceTemplate');
-                container.style.display = 'block';
-                html2pdf().set({ margin: 0, filename: 'Budget_Hawk_Statement.pdf', image: { type: 'jpeg', quality: 1.0 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' } }).from(target).save().then(() => { container.style.display = 'none'; });
-            }
+            // Summary
+            document.getElementById('invGross').innerText = '$' + lastSimulationData.gross_cost.toLocaleString(undefined, { minimumFractionDigits: 2 });
+            document.getElementById('invIncome').innerText = '+$' + lastSimulationData.total_income.toLocaleString(undefined, { minimumFractionDigits: 2 });
+            document.getElementById('invNet').innerText = '$' + lastSimulationData.net_burn_rate.toLocaleString(undefined, { minimumFractionDigits: 2 });
 
-            function filterDegreeOptions() {
-                const camp = document.getElementById('wiz-campus').value;
-                const targetDeg = document.getElementById('wiz-degree');
-                targetDeg.innerHTML = '';
-                dsOptions.degrees_by_campus[camp].forEach(deg => {
-                    targetDeg.innerHTML += `<option value="${deg}">${deg}</option>`;
-                });
-            }
+            // Build per-term breakdown tables
+            const container = document.getElementById('invTermBreakdowns');
+            container.innerHTML = '';
 
-            function populateCockpitDropdowns(camp) {
-                filterDegreeOptions();
-                const resEl = document.getElementById('wiz-residence-cost');
-                const mealEl = document.getElementById('wiz-meal-cost');
-                resEl.innerHTML = '<option value="0">No Residence ($0.00)</option>';
-                dsOptions.residences_by_campus[camp].forEach(r => { resEl.innerHTML += `<option value="${r.cost}">${r.label} -$${r.cost}</option>`; });
-                mealEl.innerHTML = '<option value="0">Self-Catered ($0.00)</option>';
-                dsOptions.meals_by_campus[camp].forEach(m => { mealEl.innerHTML += `<option value="${m.cost}">${m.label} -$${m.cost}</option>`; });
-
-                // Re-clone into dash elements
-                document.getElementById('degree').innerHTML = document.getElementById('wiz-degree').innerHTML;
-                document.getElementById('residence_cost').innerHTML = resEl.innerHTML;
-                document.getElementById('meal_cost').innerHTML = mealEl.innerHTML;
-            }
-
-            function toggleLivingOptions() {
-                const v = document.getElementById('wiz-living').value;
-                const res = document.getElementById('wiz-living-res-div');
-                const rent = document.getElementById('wiz-living-rent-div');
-                if (v === 'Residence') { res.classList.remove('hidden'); rent.classList.add('hidden'); }
-                else if (v === 'Renting') { res.classList.add('hidden'); rent.classList.remove('hidden'); document.getElementById('wiz-rent-field').style.display = 'block'; }
-                else { res.classList.add('hidden'); rent.classList.remove('hidden'); document.getElementById('wiz-rent-field').style.display = 'none'; }
-            }
-
-            function toggleTransportOptions() {
-                const v = document.getElementById('wiz-transport').value;
-                const car = document.getElementById('wiz-trans-car-div');
-                const transit = document.getElementById('wiz-trans-transit-div');
-                if (v === 'Car') { car.classList.remove('hidden'); transit.classList.add('hidden'); }
-                else if (v === 'Transit') { car.classList.add('hidden'); transit.classList.remove('hidden'); }
-                else { car.classList.add('hidden'); transit.classList.add('hidden'); }
-            }
-
-            function toggleGasMode() {
-                const v = document.getElementById('wiz-gas-mode').value;
-                if (v === 'manual') {
-                    document.getElementById('wiz-gas-man').classList.remove('hidden');
-                    document.getElementById('wiz-gas-hist').classList.add('hidden');
-                } else {
-                    document.getElementById('wiz-gas-man').classList.add('hidden');
-                    document.getElementById('wiz-gas-hist').classList.remove('hidden');
+            lastSimulationData.terms.forEach((t, idx) => {
+                let rows = '';
+                if (t.breakdown) {
+                    t.breakdown.forEach(b => {
+                        rows += `<tr style="border-bottom: 1px solid #f0f0f0;">
+                                <td style="padding: 6px 10px; font-size: 10px; color: #888; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">${b.category}</td>
+                                <td style="padding: 6px 10px; font-size: 11px; color: #333;">${b.name}</td>
+                                <td style="padding: 6px 10px; font-size: 11px; text-align: right; font-weight: 700; font-family: 'Courier New', monospace;">$${b.amount.toFixed(2)}</td>
+                            </tr>`;
+                    });
                 }
-            }
 
-            function showStep(stepIndex) {
-                document.querySelectorAll('.wizard-step').forEach((el, index) => {
-                    if (index === stepIndex) {
-                        el.classList.remove('opacity-0', 'translate-y-8', 'pointer-events-none');
-                        el.classList.add('opacity-100', 'translate-y-0', 'pointer-events-auto');
-                    } else {
-                        el.classList.add('opacity-0', 'translate-y-8', 'pointer-events-none');
-                        el.classList.remove('opacity-100', 'translate-y-0', 'pointer-events-auto');
-                    }
-                });
-            }
-            function nextStep() {
-                if (currentStep === 1) populateCockpitDropdowns(document.getElementById('wiz-campus').value);
-                currentStep++; showStep(currentStep);
-            }
+                container.innerHTML += `
+                        <div style="margin-bottom: 24px; ${idx > 0 ? 'page-break-inside: avoid;' : ''}">
+                            <div style="display: flex; justify-content: space-between; align-items: center; background: #f5f3ff; border-radius: 6px 6px 0 0; padding: 10px 14px; border: 1px solid #e0d9f5; border-bottom: none;">
+                                <div>
+                                    <span style="font-size: 13px; font-weight: 900; color: #7C3AED; text-transform: uppercase; letter-spacing: 0.5px;">${t.name}</span>
+                                </div>
+                                <div style="font-size: 14px; font-weight: 900; color: #111;">$${t.total.toFixed(2)}</div>
+                            </div>
+                            <table style="width: 100%; border-collapse: collapse; border: 1px solid #e5e7eb; border-top: none; font-size: 11px;">
+                                <thead>
+                                    <tr style="background: #fafafa;">
+                                        <th style="padding: 6px 10px; text-align: left; font-size: 9px; color: #999; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; width: 22%;">Category</th>
+                                        <th style="padding: 6px 10px; text-align: left; font-size: 9px; color: #999; text-transform: uppercase; letter-spacing: 1px; font-weight: 700;">Description</th>
+                                        <th style="padding: 6px 10px; text-align: right; font-size: 9px; color: #999; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; width: 18%;">Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${rows}
+                                    <tr style="background: #f5f3ff; border-top: 2px solid #7C3AED;">
+                                        <td colspan="2" style="padding: 8px 10px; font-size: 11px; font-weight: 900; color: #7C3AED; text-transform: uppercase;">Term Total</td>
+                                        <td style="padding: 8px 10px; text-align: right; font-size: 13px; font-weight: 900; color: #7C3AED; font-family: 'Courier New', monospace;">$${t.total.toFixed(2)}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>`;
+            });
 
-            function checkDashTransportInputs() {
-                // Ensure inputs persist to hidden
-                const m = document.getElementById('transport_mode').value;
-                if (m === 'Transit') document.getElementById('dash_extra_transit').value = document.getElementById('dash_transit_inp').value;
-                if (m === 'Car') {
-                    document.getElementById('dash_car_model').value = document.getElementById('dash_car_m').value;
-                    document.getElementById('dash_distance_km').value = document.getElementById('dash_car_km').value;
-                    const gm = document.getElementById('dash_g_m').value;
-                    if (gm === 'manual') document.getElementById('dash_manual_gas').value = document.getElementById('dash_g_man_inp').value;
-                    else document.getElementById('dash_manual_gas').value = document.getElementById('dash_g_hist_inp').value;
-                }
-                updateSimulation();
-            }
+            const invContainer = document.getElementById('invoiceTemplateContainer');
+            const target = document.getElementById('invoiceTemplate');
+            invContainer.style.display = 'block';
+            html2pdf().set({
+                margin: [0.4, 0.3, 0.4, 0.3],
+                filename: 'Budget_Hawk_Financial_Statement.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
+                pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+            }).from(target).save().then(() => { invContainer.style.display = 'none'; });
+        }
 
-            function toggleDashTransport() {
-                const v = document.getElementById('transport_mode').value;
-                const b = document.getElementById('dash-trans-opts');
-                if (v === 'Walk') b.classList.add('hidden');
-                else if (v === 'Transit') {
-                    b.classList.remove('hidden');
-                    b.innerHTML = `<input type="number" id="dash_transit_inp" placeholder="$ Transit weekly" class="w-full rounded bg-brand-dark p-2 std-input" value="${document.getElementById('wiz-extra-transit').value}" onkeyup="checkDashTransportInputs()">`;
+        function filterDegreeOptions() {
+            const camp = document.getElementById('wiz-campus').value;
+            const targetDeg = document.getElementById('wiz-degree');
+            targetDeg.innerHTML = '';
+            dsOptions.degrees_by_campus[camp].forEach(deg => {
+                targetDeg.innerHTML += `<option value="${deg}">${deg}</option>`;
+            });
+        }
+
+        function populateCockpitDropdowns(camp) {
+            filterDegreeOptions();
+            const resEl = document.getElementById('wiz-residence-cost');
+            const mealEl = document.getElementById('wiz-meal-cost');
+            resEl.innerHTML = '<option value="0">No Residence ($0.00)</option>';
+            dsOptions.residences_by_campus[camp].forEach(r => { resEl.innerHTML += `<option value="${r.cost}">${r.label} -$${r.cost}</option>`; });
+            mealEl.innerHTML = '<option value="0">Self-Catered ($0.00)</option>';
+            dsOptions.meals_by_campus[camp].forEach(m => { mealEl.innerHTML += `<option value="${m.cost}">${m.label} -$${m.cost}</option>`; });
+
+            // Re-clone into dash elements
+            document.getElementById('degree').innerHTML = document.getElementById('wiz-degree').innerHTML;
+            document.getElementById('residence_cost').innerHTML = resEl.innerHTML;
+            document.getElementById('meal_cost').innerHTML = mealEl.innerHTML;
+        }
+
+        function toggleLivingOptions() {
+            const v = document.getElementById('wiz-living').value;
+            const res = document.getElementById('wiz-living-res-div');
+            const rent = document.getElementById('wiz-living-rent-div');
+            if (v === 'Residence') { res.classList.remove('hidden'); rent.classList.add('hidden'); }
+            else if (v === 'Renting') { res.classList.add('hidden'); rent.classList.remove('hidden'); document.getElementById('wiz-rent-field').style.display = 'block'; }
+            else { res.classList.add('hidden'); rent.classList.remove('hidden'); document.getElementById('wiz-rent-field').style.display = 'none'; }
+        }
+
+        function toggleTransportOptions() {
+            const v = document.getElementById('wiz-transport').value;
+            const car = document.getElementById('wiz-trans-car-div');
+            const transit = document.getElementById('wiz-trans-transit-div');
+            if (v === 'Car') { car.classList.remove('hidden'); transit.classList.add('hidden'); }
+            else if (v === 'Transit') { car.classList.add('hidden'); transit.classList.remove('hidden'); }
+            else { car.classList.add('hidden'); transit.classList.add('hidden'); }
+        }
+
+        function toggleGasMode() {
+            const v = document.getElementById('wiz-gas-mode').value;
+            if (v === 'manual') {
+                document.getElementById('wiz-gas-man').classList.remove('hidden');
+                document.getElementById('wiz-gas-hist').classList.add('hidden');
+            } else {
+                document.getElementById('wiz-gas-man').classList.add('hidden');
+                document.getElementById('wiz-gas-hist').classList.remove('hidden');
+            }
+        }
+
+        function showStep(stepIndex) {
+            document.querySelectorAll('.wizard-step').forEach((el, index) => {
+                if (index === stepIndex) {
+                    el.classList.remove('opacity-0', 'translate-y-8', 'pointer-events-none');
+                    el.classList.add('opacity-100', 'translate-y-0', 'pointer-events-auto');
                 } else {
-                    b.classList.remove('hidden');
-                    const cars = dsOptions.cars.map(c => `<option value="${c}">${c}</option>`).join('');
-                    const gas = dsOptions.gas_prices.map(g => `<option value="${g.val}">${g.label} ($${g.val})</option>`).join('');
-                    b.innerHTML = `
+                    el.classList.add('opacity-0', 'translate-y-8', 'pointer-events-none');
+                    el.classList.remove('opacity-100', 'translate-y-0', 'pointer-events-auto');
+                }
+            });
+        }
+        function nextStep() {
+            if (currentStep === 1) populateCockpitDropdowns(document.getElementById('wiz-campus').value);
+            currentStep++; showStep(currentStep);
+        }
+
+        function checkDashTransportInputs() {
+            // Ensure inputs persist to hidden
+            const m = document.getElementById('transport_mode').value;
+            if (m === 'Transit') document.getElementById('dash_extra_transit').value = document.getElementById('dash_transit_inp').value;
+            if (m === 'Car') {
+                document.getElementById('dash_car_model').value = document.getElementById('dash_car_m').value;
+                document.getElementById('dash_distance_km').value = document.getElementById('dash_car_km').value;
+                const gm = document.getElementById('dash_g_m').value;
+                if (gm === 'manual') document.getElementById('dash_manual_gas').value = document.getElementById('dash_g_man_inp').value;
+                else document.getElementById('dash_manual_gas').value = document.getElementById('dash_g_hist_inp').value;
+            }
+            updateSimulation();
+        }
+
+        function toggleDashTransport() {
+            const v = document.getElementById('transport_mode').value;
+            const b = document.getElementById('dash-trans-opts');
+            if (v === 'Walk') b.classList.add('hidden');
+            else if (v === 'Transit') {
+                b.classList.remove('hidden');
+                b.innerHTML = `<input type="number" id="dash_transit_inp" placeholder="$ Transit weekly" class="w-full rounded bg-brand-dark p-2 std-input" value="${document.getElementById('wiz-extra-transit').value}" onkeyup="checkDashTransportInputs()">`;
+            } else {
+                b.classList.remove('hidden');
+                const cars = dsOptions.cars.map(c => `<option value="${c}">${c}</option>`).join('');
+                const gas = dsOptions.gas_prices.map(g => `<option value="${g.val}">${g.label} ($${g.val})</option>`).join('');
+                b.innerHTML = `
                     <select id="dash_car_m" class="w-full rounded bg-brand-dark p-2 std-input mb-1" onchange="checkDashTransportInputs()">${cars}</select>
                     <input id="dash_car_km" type="number" placeholder="KM/week" class="w-full rounded bg-brand-dark p-2 std-input mb-1" onkeyup="checkDashTransportInputs()" value="50">
                     <select id="dash_g_m" class="w-full rounded bg-brand-dark p-2 std-input mb-1" onchange="checkDashTransportInputs()"><option value="historical">Historical Date</option><option value="manual">Manual $</option></select>
                     <select id="dash_g_hist_inp" class="w-full rounded bg-brand-dark p-2 std-input mb-1" onchange="checkDashTransportInputs()">${gas}</select>
                     <input id="dash_g_man_inp" type="number" placeholder="Gas/L" class="hidden w-full rounded bg-brand-dark p-2 std-input" onkeyup="checkDashTransportInputs()">
                 `;
-                }
-                checkDashTransportInputs();
             }
+            checkDashTransportInputs();
+        }
 
-            function toggleDashLiving() {
-                const v = document.getElementById('living_mode').value;
-                const res = document.getElementById('dash-res-div');
-                const rent = document.getElementById('dash-rent-div');
-                if (v === 'Residence') { res.classList.remove('hidden'); rent.classList.add('hidden'); }
-                else { res.classList.add('hidden'); rent.classList.remove('hidden'); document.getElementById('monthly_rent').style.display = v === 'Renting' ? 'block' : 'none'; }
+        function toggleDashLiving() {
+            const v = document.getElementById('living_mode').value;
+            const res = document.getElementById('dash-res-div');
+            const rent = document.getElementById('dash-rent-div');
+            if (v === 'Residence') { res.classList.remove('hidden'); rent.classList.add('hidden'); }
+            else { res.classList.add('hidden'); rent.classList.remove('hidden'); document.getElementById('monthly_rent').style.display = v === 'Renting' ? 'block' : 'none'; }
+        }
+
+        function completeWizard() {
+            try {
+                // Push values strictly to dashboard ID copies
+                ['campus', 'residency', 'degree', 'credits', 'living'].forEach(k => {
+                    const map = k === 'living' ? 'living_mode' : k;
+                    document.getElementById(map).value = document.getElementById('wiz-' + k).value;
+                });
+
+                // Map timeline manually because wizard IDs use hyphens
+                document.getElementById('start_month').value = document.getElementById('wiz-start-month').value;
+                document.getElementById('start_year').value = document.getElementById('wiz-start-year').value;
+                document.getElementById('terms_per_year').value = document.getElementById('wiz-terms-per-year').value;
+                document.getElementById('years').value = document.getElementById('wiz-years').value;
+
+                document.getElementById('residence_cost').value = document.getElementById('wiz-residence-cost').value;
+                document.getElementById('meal_cost').value = document.getElementById('wiz-meal-cost').value;
+                document.getElementById('monthly_rent').value = document.getElementById('wiz-monthly-rent').value;
+                document.getElementById('monthly_food').value = document.getElementById('wiz-monthly-food').value;
+
+                // Transport extraction mapping
+                document.getElementById('dash_extra_transit').value = document.getElementById('wiz-extra-transit').value;
+                document.getElementById('dash_car_model').value = document.getElementById('wiz-car-model').value;
+                document.getElementById('dash_distance_km').value = document.getElementById('wiz-car-km').value;
+
+                const gasMode = document.getElementById('wiz-gas-mode').value;
+                document.getElementById('dash_manual_gas').value = gasMode === 'manual' ? document.getElementById('wiz-gas-man').value : document.getElementById('wiz-gas-hist').value;
+
+                document.getElementById('transport_mode').value = document.getElementById('wiz-transport').value;
+
+                const wizNode = document.getElementById('onboardingWizard');
+                wizNode.classList.add('opacity-0', 'pointer-events-none');
+                // Force removal after transition
+                setTimeout(() => { wizNode.style.display = 'none'; }, 1000);
+
+                document.getElementById('mainApp').classList.remove('hidden');
+                document.getElementById('bodyRoot').classList.remove('overflow-hidden');
+
+                // Enable bindings
+                const inputs = ['campus', 'residency', 'degree', 'credits', 'living_mode', 'residence_cost', 'meal_cost',
+                    'monthly_rent', 'monthly_food', 'start_month', 'start_year', 'terms_per_year', 'years', 'transport_mode',
+                    'income_amount', 'income_freq'];
+                inputs.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) { el.addEventListener('change', updateSimulation); if (el.tagName === 'INPUT') el.addEventListener('keyup', updateSimulation); }
+                });
+
+                toggleDashLiving();
+                toggleDashTransport(); // Forces initial HTML rewrite of transport settings
+                setTimeout(() => { document.getElementById('mainApp').classList.remove('opacity-0'); updateSimulation(); }, 500);
+
+            } catch (e) {
+                console.error("Wizard Finalization Error: ", e);
+                alert("An error occurred loading the dashboard data mapping. Please verify all inputs.");
             }
+        }
 
-            function completeWizard() {
-                try {
-                    // Push values strictly to dashboard ID copies
-                    ['campus', 'residency', 'degree', 'credits', 'living'].forEach(k => {
-                        const map = k === 'living' ? 'living_mode' : k;
-                        document.getElementById(map).value = document.getElementById('wiz-' + k).value;
+        function renderTermCards(terms) {
+            const c = document.getElementById('termCardsContainer'); c.innerHTML = '';
+            terms.forEach((t, idx) => {
+                // Build breakdown table rows
+                let breakdownRows = '';
+                if (t.breakdown && t.breakdown.length > 0) {
+                    t.breakdown.forEach(b => {
+                        const catColors = {
+                            'Tuition': 'text-purple-300',
+                            'Incidental Fee': 'text-blue-300',
+                            'Housing': 'text-orange-300',
+                            'Food': 'text-green-300',
+                            'Transport': 'text-yellow-300'
+                        };
+                        const color = catColors[b.category] || 'text-purple-300';
+                        breakdownRows += `
+                                <tr class="border-b border-purple-900/30 hover:bg-white/5 transition">
+                                    <td class="py-2 px-3 text-[11px] ${color} font-semibold uppercase tracking-wide">${b.category}</td>
+                                    <td class="py-2 px-3 text-[11px] text-purple-100">${b.name}</td>
+                                    <td class="py-2 px-3 text-[11px] text-right font-mono font-bold text-white">$${b.amount.toFixed(2)}</td>
+                                </tr>`;
                     });
-
-                    // Map timeline manually because wizard IDs use hyphens
-                    document.getElementById('start_month').value = document.getElementById('wiz-start-month').value;
-                    document.getElementById('start_year').value = document.getElementById('wiz-start-year').value;
-                    document.getElementById('terms_per_year').value = document.getElementById('wiz-terms-per-year').value;
-                    document.getElementById('years').value = document.getElementById('wiz-years').value;
-
-                    document.getElementById('residence_cost').value = document.getElementById('wiz-residence-cost').value;
-                    document.getElementById('meal_cost').value = document.getElementById('wiz-meal-cost').value;
-                    document.getElementById('monthly_rent').value = document.getElementById('wiz-monthly-rent').value;
-                    document.getElementById('monthly_food').value = document.getElementById('wiz-monthly-food').value;
-
-                    // Transport extraction mapping
-                    document.getElementById('dash_extra_transit').value = document.getElementById('wiz-extra-transit').value;
-                    document.getElementById('dash_car_model').value = document.getElementById('wiz-car-model').value;
-                    document.getElementById('dash_distance_km').value = document.getElementById('wiz-car-km').value;
-
-                    const gasMode = document.getElementById('wiz-gas-mode').value;
-                    document.getElementById('dash_manual_gas').value = gasMode === 'manual' ? document.getElementById('wiz-gas-man').value : document.getElementById('wiz-gas-hist').value;
-
-                    document.getElementById('transport_mode').value = document.getElementById('wiz-transport').value;
-
-                    const wizNode = document.getElementById('onboardingWizard');
-                    wizNode.classList.add('opacity-0', 'pointer-events-none');
-                    // Force removal after transition
-                    setTimeout(() => { wizNode.style.display = 'none'; }, 1000);
-
-                    document.getElementById('mainApp').classList.remove('hidden');
-                    document.getElementById('bodyRoot').classList.remove('overflow-hidden');
-
-                    // Enable bindings
-                    const inputs = ['campus', 'residency', 'degree', 'credits', 'living_mode', 'residence_cost', 'meal_cost',
-                        'monthly_rent', 'monthly_food', 'start_month', 'start_year', 'terms_per_year', 'years', 'transport_mode',
-                        'income_amount', 'income_freq'];
-                    inputs.forEach(id => {
-                        const el = document.getElementById(id);
-                        if (el) { el.addEventListener('change', updateSimulation); if (el.tagName === 'INPUT') el.addEventListener('keyup', updateSimulation); }
-                    });
-
-                    toggleDashLiving();
-                    toggleDashTransport(); // Forces initial HTML rewrite of transport settings
-                    setTimeout(() => { document.getElementById('mainApp').classList.remove('opacity-0'); updateSimulation(); }, 500);
-
-                } catch (e) {
-                    console.error("Wizard Finalization Error: ", e);
-                    alert("An error occurred loading the dashboard data mapping. Please verify all inputs.");
                 }
-            }
 
-            function renderTermCards(terms) {
-                const c = document.getElementById('termCardsContainer'); c.innerHTML = '';
-                terms.forEach(t => {
-                    c.innerHTML += `
-                <div class="bg-black/40 border border-purple-800/60 rounded-lg p-4 transition hover:border-brand-accent/60 flex flex-col md:flex-row gap-4 items-center">
-                    <div class="md:w-1/3">
-                        <h4 class="text-brand-glow font-black text-lg tracking-tight uppercase">${t.name}</h4>
-                        <p class="text-[10px] text-purple-400 font-mono mt-1">Net Term Burn: $${t.net_burn.toFixed(2)}</p>
+                c.innerHTML += `
+                <div class="bg-black/40 border border-purple-800/60 rounded-lg transition hover:border-brand-accent/60 overflow-hidden">
+                    <div class="p-4 flex flex-col md:flex-row gap-4 items-center">
+                        <div class="md:w-1/3">
+                            <h4 class="text-brand-glow font-black text-lg tracking-tight uppercase">${t.name}</h4>
+                            <p class="text-[10px] text-purple-400 font-mono mt-1">Net Term Burn: $${t.net_burn.toFixed(2)}</p>
+                        </div>
+                        <div class="md:w-2/3 grid grid-cols-2 md:grid-cols-5 gap-2 w-full">
+                            <div class="bg-white/5 rounded p-2 text-center border-b-2 border-purple-800/50">
+                                <p class="text-[9px] uppercase text-purple-400">Tuition/Fees</p><p class="text-xs font-mono font-bold">$${t.tuition.toFixed(0)}</p>
+                            </div>
+                            <div class="bg-white/5 rounded p-2 text-center border-b-2 border-purple-800/50">
+                                <p class="text-[9px] uppercase text-purple-400">Rent</p><p class="text-xs font-mono font-bold">$${t.rent.toFixed(0)}</p>
+                            </div>
+                            <div class="bg-white/5 rounded p-2 text-center border-b-2 border-purple-800/50">
+                                <p class="text-[9px] uppercase text-purple-400">Food</p><p class="text-xs font-mono font-bold">$${t.food.toFixed(0)}</p>
+                            </div>
+                            <div class="bg-white/5 rounded p-2 text-center border-b-2 border-purple-800/50">
+                                <p class="text-[9px] uppercase text-purple-400">Transport</p><p class="text-xs font-mono font-bold">$${t.gas.toFixed(0)}</p>
+                            </div>
+                            <div class="bg-white/10 rounded p-2 text-center border-b-2 border-brand-accent shadow-inner">
+                                <p class="text-[9px] uppercase text-brand-accent font-black">Gross Total</p><p class="text-sm font-mono font-black text-white">$${t.total.toFixed(0)}</p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="md:w-2/3 grid grid-cols-2 md:grid-cols-5 gap-2 w-full">
-                        <div class="bg-white/5 rounded p-2 text-center border-b-2 border-purple-800/50">
-                            <p class="text-[9px] uppercase text-purple-400">Tuition/Fees</p><p class="text-xs font-mono font-bold">$${t.tuition.toFixed(0)}</p>
-                        </div>
-                        <div class="bg-white/5 rounded p-2 text-center border-b-2 border-purple-800/50">
-                            <p class="text-[9px] uppercase text-purple-400">Rent</p><p class="text-xs font-mono font-bold">$${t.rent.toFixed(0)}</p>
-                        </div>
-                        <div class="bg-white/5 rounded p-2 text-center border-b-2 border-purple-800/50">
-                            <p class="text-[9px] uppercase text-purple-400">Food</p><p class="text-xs font-mono font-bold">$${t.food.toFixed(0)}</p>
-                        </div>
-                        <div class="bg-white/5 rounded p-2 text-center border-b-2 border-purple-800/50">
-                            <p class="text-[9px] uppercase text-purple-400">Transport</p><p class="text-xs font-mono font-bold">$${t.gas.toFixed(0)}</p>
-                        </div>
-                        <div class="bg-white/10 rounded p-2 text-center border-b-2 border-brand-accent shadow-inner">
-                            <p class="text-[9px] uppercase text-brand-accent font-black">Gross Total</p><p class="text-sm font-mono font-black text-white">$${t.total.toFixed(0)}</p>
-                        </div>
+                    <div class="px-4 pb-2">
+                        <button type="button" onclick="toggleBreakdown(${idx})" class="text-[10px] uppercase tracking-widest text-purple-400 hover:text-brand-glow transition font-bold flex items-center gap-1 cursor-pointer">
+                            <span id="breakdown-arrow-${idx}" class="inline-block transition-transform duration-200">▶</span> View Full Breakdown
+                        </button>
+                    </div>
+                    <div id="breakdown-${idx}" class="hidden border-t border-purple-900/40 bg-black/30">
+                        <table class="w-full text-left">
+                            <thead>
+                                <tr class="border-b border-purple-800/50">
+                                    <th class="py-2 px-3 text-[9px] uppercase text-purple-500 tracking-widest font-bold w-1/4">Category</th>
+                                    <th class="py-2 px-3 text-[9px] uppercase text-purple-500 tracking-widest font-bold">Description</th>
+                                    <th class="py-2 px-3 text-[9px] uppercase text-purple-500 tracking-widest font-bold text-right w-1/5">Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${breakdownRows}
+                                <tr class="border-t-2 border-brand-accent/50 bg-brand-accent/5">
+                                    <td colspan="2" class="py-3 px-3 text-xs uppercase text-brand-glow font-black tracking-wide">Term Total</td>
+                                    <td class="py-3 px-3 text-right text-sm font-mono font-black text-brand-glow">$${t.total.toFixed(2)}</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
                 `;
-                });
+            });
+        }
+
+        function toggleBreakdown(idx) {
+            const panel = document.getElementById('breakdown-' + idx);
+            const arrow = document.getElementById('breakdown-arrow-' + idx);
+            if (panel.classList.contains('hidden')) {
+                panel.classList.remove('hidden');
+                arrow.style.transform = 'rotate(90deg)';
+            } else {
+                panel.classList.add('hidden');
+                arrow.style.transform = 'rotate(0deg)';
             }
+        }
 
-            async function updateSimulation() {
-                const v = id => document.getElementById(id).value;
-                const payload = {
-                    start_month: v('start_month'), start_year: v('start_year'), terms_per_year: v('terms_per_year'), years: v('years'),
-                    campus: v('campus'), residency: v('residency'), degree: v('degree'), credit_load: v('credits') || 2.5,
-                    living_mode: v('living_mode'), residence_cost: v('residence_cost'), meal_cost: v('meal_cost'),
-                    monthly_rent: v('monthly_rent') || 0, monthly_food: v('monthly_food') || 0,
-                    transport_mode: v('transport_mode'), car_model: v('dash_car_model'), distance_km: v('dash_distance_km') || 0,
-                    manual_gas_price: v('dash_manual_gas'), extra_transit_weekly: v('dash_extra_transit') || 0,
-                    starting_capital: 0, income_amount: v('income_amount') || 0, income_freq: v('income_freq')
-                };
-
-                const response = await fetch('/api/calculate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-                const data = await response.json();
-
-                lastSimulationData = data;
-
-                document.getElementById('cost-gross').innerText = '$' + data.gross_cost.toLocaleString(undefined, { minimumFractionDigits: 2 });
-                document.getElementById('cost-income').innerText = '+$' + data.total_income.toLocaleString(undefined, { minimumFractionDigits: 2 });
-                document.getElementById('cost-net').innerText = '$' + data.net_burn_rate.toLocaleString(undefined, { minimumFractionDigits: 2 });
-
-                renderTermCards(data.terms);
-            }
-
-            window.onload = () => {
-                const histEl = document.getElementById('wiz-gas-hist');
-                dsOptions.gas_prices.forEach(g => { histEl.innerHTML += `<option value="${g.val}">${g.label} ($${g.val})</option>`; });
-                const carsEl = document.getElementById('wiz-car-model');
-                dsOptions.cars.forEach(g => { carsEl.innerHTML += `<option value="${g}">${g}</option>`; });
-
-                document.getElementById('wiz-campus').onchange = () => { filterDegreeOptions(); populateCockpitDropdowns(document.getElementById('wiz-campus').value); }
-                filterDegreeOptions();
-                showStep(0);
+        async function updateSimulation() {
+            const v = id => document.getElementById(id).value;
+            const payload = {
+                start_month: v('start_month'), start_year: v('start_year'), terms_per_year: v('terms_per_year'), years: v('years'),
+                campus: v('campus'), residency: v('residency'), degree: v('degree'), credit_load: v('credits') || 2.5,
+                living_mode: v('living_mode'), residence_cost: v('residence_cost'), meal_cost: v('meal_cost'),
+                monthly_rent: v('monthly_rent') || 0, monthly_food: v('monthly_food') || 0,
+                transport_mode: v('transport_mode'), car_model: v('dash_car_model'), distance_km: v('dash_distance_km') || 0,
+                manual_gas_price: v('dash_manual_gas'), extra_transit_weekly: v('dash_extra_transit') || 0,
+                starting_capital: 0, income_amount: v('income_amount') || 0, income_freq: v('income_freq')
             };
-        </script>
+
+            const response = await fetch('/api/calculate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+            const data = await response.json();
+
+            lastSimulationData = data;
+
+            document.getElementById('cost-gross').innerText = '$' + data.gross_cost.toLocaleString(undefined, { minimumFractionDigits: 2 });
+            document.getElementById('cost-income').innerText = '+$' + data.total_income.toLocaleString(undefined, { minimumFractionDigits: 2 });
+            document.getElementById('cost-net').innerText = '$' + data.net_burn_rate.toLocaleString(undefined, { minimumFractionDigits: 2 });
+
+            renderTermCards(data.terms);
+        }
+
+        window.onload = () => {
+            const histEl = document.getElementById('wiz-gas-hist');
+            dsOptions.gas_prices.forEach(g => { histEl.innerHTML += `<option value="${g.val}">${g.label} ($${g.val})</option>`; });
+            const carsEl = document.getElementById('wiz-car-model');
+            dsOptions.cars.forEach(g => { carsEl.innerHTML += `<option value="${g}">${g}</option>`; });
+
+            document.getElementById('wiz-campus').onchange = () => { filterDegreeOptions(); populateCockpitDropdowns(document.getElementById('wiz-campus').value); }
+            filterDegreeOptions();
+            showStep(0);
+        };
+    </script>
 </body>
 
 </html>
